@@ -39,5 +39,5 @@ parse_c_command <- function(string) {
     comp <- dest_comp[2]
   }
 
-  c_command(dest, comp, jump)
+  c_command(dest = dest, comp = comp, jump = jump)
 }
