@@ -1,3 +1,5 @@
+to_hack <- function(commands) map_chr(commands, assemble)
+
 assemble <- function(x) UseMethod("assemble")
 
 assemble.a_command <- function(x) {
