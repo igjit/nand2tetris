@@ -1,12 +1,15 @@
 assemble <- function(x) UseMethod("assemble")
 
 assemble.a_command <- function(x) {
-  val <- intToBits(x$int) %>%
-    head(15) %>%
+  str_c("0", as_bin(x$int, 15), collapse = "")
+}
+
+as_bin <- function(int, digit) {
+  intToBits(int) %>%
+    head(digit) %>%
     rev %>%
     as.integer %>%
     str_c(collapse = "")
-  str_c("0", val, collapse = "")
 }
 
 a_command <- function(int) {
