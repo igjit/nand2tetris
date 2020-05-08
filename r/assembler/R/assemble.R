@@ -1,5 +1,18 @@
 to_hack <- function(commands) map_chr(commands, assemble)
 
+generate_symbol_table <- function(commands) {
+  symbol_table <- c()
+  pc <- 0
+  commands %>% walk(function(cmd) {
+    if (is(cmd, "l_command")) {
+      symbol_table[cmd$symbol] <<- pc
+    } else {
+      pc <<- pc + 1
+    }
+  })
+  symbol_table
+}
+
 assemble <- function(x) UseMethod("assemble")
 
 assemble.a_command <- function(x) {

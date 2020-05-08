@@ -22,3 +22,9 @@ test_that("assemble_c_jump works", {
   expect_equal(assemble_c_jump("JGT"), "001")
   expect_equal(assemble_c_jump("JLE"), "110")
 })
+
+test_that("generate_symbol_table works", {
+  commands <- map(c("(LOOP)", "@LOOP", "0;JMP"), parse_command)
+  expect_equal(generate_symbol_table(commands), c(LOOP = 0))
+})
+
