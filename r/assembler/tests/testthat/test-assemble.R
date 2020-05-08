@@ -28,3 +28,8 @@ test_that("generate_symbol_table works", {
   expect_equal(generate_symbol_table(commands), c(LOOP = 0))
 })
 
+test_that("resolve_symbol works", {
+  expect_equal(resolve_symbol(a_command(1)), a_command(1))
+  expect_equivalent(resolve_symbol(a_command(symbol = "SCREEN"))$int, 16384)
+  expect_equivalent(resolve_symbol(a_command(symbol = "a"), c(a = 123))$int, 123)
+})

@@ -1,5 +1,10 @@
-to_hack <- function(commands) map_chr(commands, assemble)
+to_hack <- function(commands) {
+  symbol_table <- generate_symbol_table(commands)
+  resolve_symbols(commands, symbol_table) %>%
+    map_chr(assemble)
+}
 
+#' @importFrom methods is
 generate_symbol_table <- function(commands) {
   symbol_table <- c()
   pc <- 0
@@ -11,6 +16,30 @@ generate_symbol_table <- function(commands) {
     }
   })
   symbol_table
+}
+
+resolve_symbols <- function(commands, symbol_table) {
+  gen_address <- address_generator()
+  commands %>%
+    discard(~ is(., "l_command")) %>%
+    map(~ resolve_symbol(., symbol_table, gen_address))
+}
+
+resolve_symbol <- function(command, symbol_table, gen_address) {
+  if (!is(command, "a_command") || !is.na(command$int)) {
+    command
+  } else {
+    sym <- command$symbol
+    adr <- if (!is.na(DEFINED_SYMBOL[sym])) {
+      DEFINED_SYMBOL[sym]
+    } else if (!is.na(symbol_table[sym])) {
+      symbol_table[sym]
+    } else {
+      gen_address(sym)
+    }
+    command$int <- adr
+    command
+  }
 }
 
 assemble <- function(x) UseMethod("assemble")
