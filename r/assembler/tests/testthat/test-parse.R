@@ -10,6 +10,7 @@ test_that("extract_commands works", {
 
 test_that("parse_a_command works", {
   expect_equal(parse_a_command("@12"), a_command(12))
+  expect_equal(parse_a_command("@LOOP"), a_command(symbol = "LOOP"))
 })
 
 test_that("parse_c_command works", {

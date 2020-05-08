@@ -22,8 +22,9 @@ parse_command <- function(string) {
 
 parse_a_command <- function(string) {
   sym <- str_match(string, "@(.+)")[, 2]
-  int <- as.integer(sym)
-  a_command(int = int)
+  int <- suppressWarnings(as.integer(sym))
+  if (!is.na(int)) sym <- NULL
+  a_command(int = int, symbol = sym)
 }
 
 parse_c_command <- function(string) {

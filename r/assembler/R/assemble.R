@@ -70,7 +70,7 @@ as_bin <- function(int, digit) {
 }
 
 a_command <- function(int = NA, symbol = NULL) {
-  structure(list(int = int, symbol = symbol), class = "a_command")
+  structure(list(int = as.numeric(int), symbol = symbol), class = "a_command")
 }
 
 c_command <- function(comp, dest = NULL, jump = NULL) {
