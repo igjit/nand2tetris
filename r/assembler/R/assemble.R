@@ -69,8 +69,8 @@ as_bin <- function(int, digit) {
     str_c(collapse = "")
 }
 
-a_command <- function(int) {
-  structure(list(int = int), class = "a_command")
+a_command <- function(int = NA, symbol = NULL) {
+  structure(list(int = int, symbol = symbol), class = "a_command")
 }
 
 c_command <- function(comp, dest = NULL, jump = NULL) {
