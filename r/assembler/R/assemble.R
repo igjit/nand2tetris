@@ -76,3 +76,7 @@ a_command <- function(int) {
 c_command <- function(comp, dest = NULL, jump = NULL) {
   structure(list(comp = comp, dest = dest, jump = jump), class = "c_command")
 }
+
+l_command <- function(symbol) {
+  structure(list(symbol = symbol), class = "l_command")
+}

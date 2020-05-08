@@ -16,6 +16,7 @@ extract_commands <- function(lines) {
 parse_command <- function(string) {
   if (str_starts(string, "@")) parse_a_command(string)
   else if (str_detect(string, "[=;]")) parse_c_command(string)
+  else if (str_starts(string, "\\(")) parse_l_command(string)
   else stop("Unknown command: ", string)
 }
 
@@ -40,4 +41,9 @@ parse_c_command <- function(string) {
   }
 
   c_command(dest = dest, comp = comp, jump = jump)
+}
+
+parse_l_command <- function(string) {
+  symbol <- str_match(string, "\\((.+)\\)")[, 2]
+  l_command(symbol = symbol)
 }
