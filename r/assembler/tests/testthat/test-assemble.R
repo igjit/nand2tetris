@@ -33,3 +33,9 @@ test_that("resolve_symbol works", {
   expect_equivalent(resolve_symbol(a_command(symbol = "SCREEN"))$int, 16384)
   expect_equivalent(resolve_symbol(a_command(symbol = "a"), c(a = 123))$int, 123)
 })
+
+test_that("to_hack works", {
+  asm <- parse(file.path("data", "Max.asm"))
+  hack <- readLines(file.path("data", "Max.hack"))
+  expect_equal(to_hack(asm), hack)
+})
