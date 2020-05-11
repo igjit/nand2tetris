@@ -1,6 +1,6 @@
 to_asm <- function(commands) {
   commands %>%
-  map(translate_command) %>%
+    map(translate_command) %>%
     flatten_chr
 }
 
