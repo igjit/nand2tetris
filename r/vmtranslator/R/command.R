@@ -1,3 +1,9 @@
+to_asm <- function(commands) {
+  commands %>%
+  map(translate_command) %>%
+    flatten_chr
+}
+
 translate_command <- function(command) {
   fn <- dispatch_table[[command$name]]
   if (is.null(fn)) stop("Not implemented: ", command$name)
