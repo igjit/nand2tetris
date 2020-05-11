@@ -15,7 +15,14 @@ dispatch_table <- list(
                           "@SP",
                           "M=M+1"),
            stop("Not implemented: ", arg1))
-  })
+  },
+  add = function(...) c("@SP",
+                        "A=M-1",
+                        "D=M",
+                        "A=A-1",
+                        "M=D+M",
+                        "@SP",
+                        "M=M-1"))
 
 command <- function(name, arg1 = NULL, arg2 = NULL) {
   structure(list(name = name, arg1 = arg1, arg2 = arg2), class = "command")
