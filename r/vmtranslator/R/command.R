@@ -30,7 +30,9 @@ dispatch_table <- list(
                         "M=D+M",
                         "@SP",
                         "M=M-1"),
-  eq = function(..., gen_label) compare_command("JEQ", gen_label()))
+  eq = function(..., gen_label) compare_command("JEQ", gen_label()),
+  gt = function(..., gen_label) compare_command("JGT", gen_label()),
+  lt = function(..., gen_label) compare_command("JLT", gen_label()))
 
 compare_command <- function(jump, label) {
   c("@SP",
