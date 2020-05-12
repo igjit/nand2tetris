@@ -42,7 +42,12 @@ dispatch_table <- list(
                         "M=-M"),
   eq = function(..., gen_label) compare_command("JEQ", gen_label()),
   gt = function(..., gen_label) compare_command("JGT", gen_label()),
-  lt = function(..., gen_label) compare_command("JLT", gen_label()))
+  lt = function(..., gen_label) compare_command("JLT", gen_label()),
+  and = function(...) logical_command("&"),
+  or = function(...) logical_command("|"),
+  not = function(...) c("@SP",
+                        "A=M-1",
+                        "M=!M"))
 
 compare_command <- function(jump, label) {
   c("@SP",
@@ -58,6 +63,16 @@ compare_command <- function(jump, label) {
     "A=A-1",
     "M=0",
     sym(label),
+    "@SP",
+    "M=M-1")
+}
+
+logical_command <- function(op) {
+  c("@SP",
+    "A=M-1",
+    "D=M",
+    "A=A-1",
+    str_c("M=D", op, "M"),
     "@SP",
     "M=M-1")
 }
