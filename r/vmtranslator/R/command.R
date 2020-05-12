@@ -1,17 +1,18 @@
 to_asm <- function(commands) {
+  gen_label <- label_generator()
   commands %>%
-    map(translate_command) %>%
+    map(translate_command, gen_label) %>%
     flatten_chr
 }
 
-translate_command <- function(command) {
+translate_command <- function(command, gen_label) {
   fn <- dispatch_table[[command$name]]
   if (is.null(fn)) stop("Not implemented: ", command$name)
-  fn(command$arg1, command$arg2)
+  fn(command$arg1, command$arg2, gen_label = gen_label)
 }
 
 dispatch_table <- list(
-  push = function(arg1, arg2) {
+  push = function(arg1, arg2, ...) {
     switch(arg1,
            "constant" = c(str_c("@", arg2),
                           "D=A",
@@ -28,7 +29,25 @@ dispatch_table <- list(
                         "A=A-1",
                         "M=D+M",
                         "@SP",
-                        "M=M-1"))
+                        "M=M-1"),
+  eq = function(..., gen_label) {
+    label <- gen_label()
+    c("@SP",
+      "A=M-1",
+      "D=M",
+      "A=A-1",
+      "D=M-D",
+      "M=-1",
+      at(label),
+      "D;JEQ",
+      "@SP",
+      "A=M-1",
+      "A=A-1",
+      "M=0",
+      sym(label),
+      "@SP",
+      "M=M-1")
+  })
 
 label_generator <- function() {
   i <- 0
@@ -39,6 +58,10 @@ label_generator <- function() {
     label
   }
 }
+
+at <- function(value) str_c("@", value)
+
+sym <- function(label) str_c("(", label, ")")
 
 command <- function(name, arg1 = NULL, arg2 = NULL) {
   structure(list(name = name, arg1 = arg1, arg2 = arg2), class = "command")
