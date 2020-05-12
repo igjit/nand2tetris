@@ -30,24 +30,25 @@ dispatch_table <- list(
                         "M=D+M",
                         "@SP",
                         "M=M-1"),
-  eq = function(..., gen_label) {
-    label <- gen_label()
-    c("@SP",
-      "A=M-1",
-      "D=M",
-      "A=A-1",
-      "D=M-D",
-      "M=-1",
-      at(label),
-      "D;JEQ",
-      "@SP",
-      "A=M-1",
-      "A=A-1",
-      "M=0",
-      sym(label),
-      "@SP",
-      "M=M-1")
-  })
+  eq = function(..., gen_label) compare_command("JEQ", gen_label()))
+
+compare_command <- function(jump, label) {
+  c("@SP",
+    "A=M-1",
+    "D=M",
+    "A=A-1",
+    "D=M-D",
+    "M=-1",
+    at(label),
+    str_c("D;", jump),
+    "@SP",
+    "A=M-1",
+    "A=A-1",
+    "M=0",
+    sym(label),
+    "@SP",
+    "M=M-1")
+}
 
 label_generator <- function() {
   i <- 0
