@@ -107,10 +107,8 @@ push_command <- function(base, index) {
 }
 
 push_temp_command <- function(index) {
-  c(at(index),
-    "D=A",
-    at(R_TEMP0),
-    "A=D+A",
+  adr <- R_TEMP0 + index
+  c(at(adr),
     "D=M",
     "@SP",
     "A=M",
@@ -136,18 +134,12 @@ pop_command <- function(base, index) {
 }
 
 pop_temp_command <- function(index) {
-  c(at(index),
-    "D=A",
-    at(R_TEMP0),
-    "D=D+A",
-    "@R13",
-    "M=D",
-    "@SP",
+  adr <- R_TEMP0 + index
+  c("@SP",
     "M=M-1",
     "A=M",
     "D=M",
-    "@R13",
-    "A=M",
+    at(adr),
     "M=D")
 }
 
