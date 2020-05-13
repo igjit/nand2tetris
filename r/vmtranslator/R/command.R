@@ -23,6 +23,14 @@ dispatch_table <- list(
                         "M=M+1"),
            stop("Not implemented: ", arg1))
   },
+  pop = function(arg1, arg2, ...) {
+    switch(arg1,
+           argument = pop_command("ARG", arg2),
+           local = pop_command("LCL", arg2),
+           this = pop_command("THIS", arg2),
+           that = pop_command("THAT", arg2),
+           stop("Not implemented: ", arg1))
+  },
   add = function(...) c("@SP",
                         "A=M-1",
                         "D=M",
@@ -75,6 +83,22 @@ logical_command <- function(op) {
     str_c("M=D", op, "M"),
     "@SP",
     "M=M-1")
+}
+
+pop_command <- function(base, index) {
+  c(at(index),
+    "D=A",
+    at(base),
+    "D=D+M",
+    "@R13",
+    "M=D",
+    "@SP",
+    "M=M-1",
+    "A=M",
+    "D=M",
+    "@R13",
+    "A=M",
+    "M=D")
 }
 
 label_generator <- function() {
