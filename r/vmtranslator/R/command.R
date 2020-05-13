@@ -14,13 +14,13 @@ translate_command <- function(command, gen_label) {
 dispatch_table <- list(
   push = function(arg1, arg2, ...) {
     switch(arg1,
-           "constant" = c(str_c("@", arg2),
-                          "D=A",
-                          "@SP",
-                          "A=M",
-                          "M=D",
-                          "@SP",
-                          "M=M+1"),
+           constant = c(at(arg2),
+                        "D=A",
+                        "@SP",
+                        "A=M",
+                        "M=D",
+                        "@SP",
+                        "M=M+1"),
            stop("Not implemented: ", arg1))
   },
   add = function(...) c("@SP",
