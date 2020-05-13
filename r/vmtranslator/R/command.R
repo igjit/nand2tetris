@@ -1,3 +1,5 @@
+TEMP0 <- 5
+
 to_asm <- function(commands) {
   gen_label <- label_generator()
   commands %>%
@@ -29,6 +31,7 @@ dispatch_table <- list(
            local = pop_command("LCL", arg2),
            this = pop_command("THIS", arg2),
            that = pop_command("THAT", arg2),
+           temp = pop_temp_command(arg2),
            stop("Not implemented: ", arg1))
   },
   add = function(...) c("@SP",
@@ -90,6 +93,22 @@ pop_command <- function(base, index) {
     "D=A",
     at(base),
     "D=D+M",
+    "@R13",
+    "M=D",
+    "@SP",
+    "M=M-1",
+    "A=M",
+    "D=M",
+    "@R13",
+    "A=M",
+    "M=D")
+}
+
+pop_temp_command <- function(index) {
+  c(at(index),
+    "D=A",
+    at(TEMP0),
+    "D=D+A",
     "@R13",
     "M=D",
     "@SP",
