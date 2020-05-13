@@ -27,6 +27,7 @@ dispatch_table <- list(
            local = push_command("LCL", arg2),
            this = push_command("THIS", arg2),
            that = push_command("THAT", arg2),
+           temp = push_temp_command(arg2),
            stop("Not implemented: ", arg1))
   },
   pop = function(arg1, arg2, ...) {
@@ -97,6 +98,19 @@ push_command <- function(base, index) {
     "D=A",
     at(base),
     "A=D+M",
+    "D=M",
+    "@SP",
+    "A=M",
+    "M=D",
+    "@SP",
+    "M=M+1")
+}
+
+push_temp_command <- function(index) {
+  c(at(index),
+    "D=A",
+    at(TEMP0),
+    "A=D+A",
     "D=M",
     "@SP",
     "A=M",
