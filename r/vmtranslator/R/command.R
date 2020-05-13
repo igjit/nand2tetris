@@ -1,4 +1,4 @@
-TEMP0 <- 5
+R_TEMP0 <- 5
 
 to_asm <- function(commands) {
   gen_label <- label_generator()
@@ -109,7 +109,7 @@ push_command <- function(base, index) {
 push_temp_command <- function(index) {
   c(at(index),
     "D=A",
-    at(TEMP0),
+    at(R_TEMP0),
     "A=D+A",
     "D=M",
     "@SP",
@@ -138,7 +138,7 @@ pop_command <- function(base, index) {
 pop_temp_command <- function(index) {
   c(at(index),
     "D=A",
-    at(TEMP0),
+    at(R_TEMP0),
     "D=D+A",
     "@R13",
     "M=D",
