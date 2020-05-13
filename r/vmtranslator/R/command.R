@@ -29,6 +29,7 @@ dispatch_table <- list(
            this = push_command("THIS", arg2),
            that = push_command("THAT", arg2),
            temp = push_register_command(R_TEMP0, arg2),
+           pointer = push_register_command(R_THIS, arg2),
            stop("Not implemented: ", arg1))
   },
   pop = function(arg1, arg2, ...) {
