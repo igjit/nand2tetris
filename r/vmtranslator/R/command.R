@@ -1,3 +1,4 @@
+R_THIS <- 3
 R_TEMP0 <- 5
 
 to_asm <- function(commands) {
@@ -37,6 +38,7 @@ dispatch_table <- list(
            this = pop_command("THIS", arg2),
            that = pop_command("THAT", arg2),
            temp = pop_register_command(R_TEMP0, arg2),
+           pointer = pop_register_command(R_THIS, arg2),
            stop("Not implemented: ", arg1))
   },
   add = function(...) c("@SP",
