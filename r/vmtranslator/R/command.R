@@ -28,8 +28,8 @@ dispatch_table <- list(
            local = push_command("LCL", arg2),
            this = push_command("THIS", arg2),
            that = push_command("THAT", arg2),
-           temp = push_register_command(R_TEMP0, arg2),
-           pointer = push_register_command(R_THIS, arg2),
+           temp = push_address_command(R_TEMP0 + arg2),
+           pointer = push_address_command(R_THIS + arg2),
            stop("Not implemented: ", arg1))
   },
   pop = function(arg1, arg2, ...) {
@@ -38,8 +38,8 @@ dispatch_table <- list(
            local = pop_command("LCL", arg2),
            this = pop_command("THIS", arg2),
            that = pop_command("THAT", arg2),
-           temp = pop_register_command(R_TEMP0, arg2),
-           pointer = pop_register_command(R_THIS, arg2),
+           temp = pop_address_command(R_TEMP0 + arg2),
+           pointer = pop_address_command(R_THIS + arg2),
            stop("Not implemented: ", arg1))
   },
   add = function(...) c("@SP",
@@ -109,9 +109,8 @@ push_command <- function(base, index) {
     "M=M+1")
 }
 
-push_register_command <- function(base, index) {
-  adr <- base + index
-  c(at(adr),
+push_address_command <- function(address) {
+  c(at(address),
     "D=M",
     "@SP",
     "A=M",
@@ -136,13 +135,12 @@ pop_command <- function(base, index) {
     "M=D")
 }
 
-pop_register_command <- function(base, index) {
-  adr <- base + index
+pop_address_command <- function(address) {
   c("@SP",
     "M=M-1",
     "A=M",
     "D=M",
-    at(adr),
+    at(address),
     "M=D")
 }
 
