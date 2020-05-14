@@ -1,6 +1,8 @@
 R_THIS <- 3
 R_TEMP0 <- 5
 
+NAMESPACE_GLOBAL <- "GLOBAL"
+
 to_asm <- function(commands) {
   gen_label <- label_generator()
   commands %>%
@@ -30,6 +32,7 @@ dispatch_table <- list(
            that = push_command("THAT", arg2),
            temp = push_address_command(R_TEMP0 + arg2),
            pointer = push_address_command(R_THIS + arg2),
+           static = push_address_command(static_symbol(NAMESPACE_GLOBAL, arg2)),
            stop("Not implemented: ", arg1))
   },
   pop = function(arg1, arg2, ...) {
@@ -40,6 +43,7 @@ dispatch_table <- list(
            that = pop_command("THAT", arg2),
            temp = pop_address_command(R_TEMP0 + arg2),
            pointer = pop_address_command(R_THIS + arg2),
+           static = pop_address_command(static_symbol(NAMESPACE_GLOBAL, arg2)),
            stop("Not implemented: ", arg1))
   },
   add = function(...) c("@SP",
@@ -155,6 +159,8 @@ label_generator <- function() {
 }
 
 at <- function(value) str_c("@", value)
+
+static_symbol <- function(namespace, index) str_c(namespace, ".", index)
 
 sym <- function(label) str_c("(", label, ")")
 
