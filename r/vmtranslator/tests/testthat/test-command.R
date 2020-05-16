@@ -1,5 +1,6 @@
 test_that("translate_command works", {
   expect_equal(translate_command(command("push", "constant", 12))[1], "@12")
+  expect_equal(translate_command(command("label", "LOOP")), "(LOOP)")
 })
 
 test_that("label_generator works", {

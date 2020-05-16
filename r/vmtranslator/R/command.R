@@ -70,7 +70,8 @@ dispatch_table <- list(
   or = function(...) logical_command("|"),
   not = function(...) c("@SP",
                         "A=M-1",
-                        "M=!M"))
+                        "M=!M"),
+  label = function(arg1, ...) sym(arg1))
 
 compare_command <- function(jump, label) {
   c("@SP",
