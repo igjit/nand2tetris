@@ -73,7 +73,8 @@ dispatch_table <- list(
                         "M=!M"),
   label = function(arg1, ...) sym(arg1),
   goto = function(arg1, ...) c(at(arg1),
-                               "0;JMP"))
+                               "0;JMP"),
+  `if-goto` = function(arg1, ...) if_goto_command(arg1))
 
 compare_command <- function(jump, label) {
   c("@SP",
@@ -149,6 +150,15 @@ pop_address_command <- function(address) {
     "D=M",
     at(address),
     "M=D")
+}
+
+if_goto_command <- function(label) {
+  c("@SP",
+    "M=M-1",
+    "A=M",
+    "D=M",
+    at(label),
+    "D;JNE")
 }
 
 label_generator <- function() {
