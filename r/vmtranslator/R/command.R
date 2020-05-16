@@ -71,7 +71,9 @@ dispatch_table <- list(
   not = function(...) c("@SP",
                         "A=M-1",
                         "M=!M"),
-  label = function(arg1, ...) sym(arg1))
+  label = function(arg1, ...) sym(arg1),
+  goto = function(arg1, ...) c(at(arg1),
+                               "0;JMP"))
 
 compare_command <- function(jump, label) {
   c("@SP",
