@@ -26,11 +26,11 @@ bootstrap_code <- function(gen_label) {
 translate_command <- function(command, gen_label) {
   fn <- dispatch_table[[command$name]]
   if (is.null(fn)) stop("Not implemented: ", command$name)
-  fn(command$arg1, command$arg2, gen_label = gen_label)
+  fn(command$arg1, command$arg2, gen_label = gen_label, scope = command$scope)
 }
 
 dispatch_table <- list(
-  push = function(arg1, arg2, ...) {
+  push = function(arg1, arg2, ..., scope) {
     switch(arg1,
            constant = c(at(arg2),
                         "D=A",
@@ -45,10 +45,10 @@ dispatch_table <- list(
            that = push_command("THAT", arg2),
            temp = push_address_command(R_TEMP0 + arg2),
            pointer = push_address_command(R_THIS + arg2),
-           static = push_address_command(static_symbol(NAMESPACE_GLOBAL, arg2)),
+           static = push_address_command(static_symbol(scope, arg2)),
            stop("Not implemented: ", arg1))
   },
-  pop = function(arg1, arg2, ...) {
+  pop = function(arg1, arg2, ..., scope) {
     switch(arg1,
            argument = pop_command("ARG", arg2),
            local = pop_command("LCL", arg2),
@@ -56,7 +56,7 @@ dispatch_table <- list(
            that = pop_command("THAT", arg2),
            temp = pop_address_command(R_TEMP0 + arg2),
            pointer = pop_address_command(R_THIS + arg2),
-           static = pop_address_command(static_symbol(NAMESPACE_GLOBAL, arg2)),
+           static = pop_address_command(static_symbol(scope, arg2)),
            stop("Not implemented: ", arg1))
   },
   add = function(...) c("@SP",
@@ -90,7 +90,7 @@ dispatch_table <- list(
   `if-goto` = function(arg1, ...) if_goto_command(arg1),
   `function` = function(arg1, arg2, ...) function_command(arg1, arg2),
   `return` = function(...) return_command(),
-  call = function(arg1, arg2, gen_label) call_command(arg1, arg2, gen_label))
+  call = function(arg1, arg2, gen_label, ...) call_command(arg1, arg2, gen_label))
 
 compare_command <- function(jump, label) {
   c("@SP",
@@ -263,10 +263,13 @@ label_generator <- function() {
 
 at <- function(value) str_c("@", value)
 
-static_symbol <- function(namespace, index) str_c(namespace, ".", index)
+static_symbol <- function(namespace, index) {
+  if (is.null(namespace)) namespace <- NAMESPACE_GLOBAL
+  str_c(namespace, ".", index)
+}
 
 sym <- function(label) str_c("(", label, ")")
 
-command <- function(name, arg1 = NULL, arg2 = NULL) {
-  structure(list(name = name, arg1 = arg1, arg2 = arg2), class = "command")
+command <- function(name, arg1 = NULL, arg2 = NULL, scope = NULL) {
+  structure(list(name = name, arg1 = arg1, arg2 = arg2, scope = scope), class = "command")
 }
