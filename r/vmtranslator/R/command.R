@@ -5,9 +5,22 @@ NAMESPACE_GLOBAL <- "GLOBAL"
 
 to_asm <- function(commands) {
   gen_label <- label_generator()
+
+  sys_init <- detect(commands, ~ .$name == "function" && .$arg1 == "Sys.init")
+  bootstrap <- if (!is.null(sys_init)) bootstrap_code(gen_label)
+
   commands %>%
     map(translate_command, gen_label) %>%
-    flatten_chr
+    flatten_chr %>%
+    c(bootstrap, .)
+}
+
+bootstrap_code <- function(gen_label) {
+  c("@256",
+    "D=A",
+    "@SP",
+    "M=D",
+    call_command("Sys.init", 0, gen_label))
 }
 
 translate_command <- function(command, gen_label) {
