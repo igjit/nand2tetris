@@ -2,7 +2,13 @@
 
 lib="$(dirname $(dirname $0))/r/vmtranslator"
 infile="$1"
-outfile="${infile%.vm}.asm"
+
+if [[ "$infile" =~ ".vm" ]]; then
+    outfile="${infile%.vm}.asm"
+else
+    base="$(basename $infile)"
+    outfile="$infile/$base.asm"
+fi
 
 echo "Translating $infile"
 
