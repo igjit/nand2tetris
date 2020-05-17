@@ -74,7 +74,8 @@ dispatch_table <- list(
   label = function(arg1, ...) sym(arg1),
   goto = function(arg1, ...) c(at(arg1),
                                "0;JMP"),
-  `if-goto` = function(arg1, ...) if_goto_command(arg1))
+  `if-goto` = function(arg1, ...) if_goto_command(arg1),
+  `function` = function(arg1, arg2, ...) function_command(arg1, arg2))
 
 compare_command <- function(jump, label) {
   c("@SP",
@@ -159,6 +160,11 @@ if_goto_command <- function(label) {
     "D=M",
     at(label),
     "D;JNE")
+}
+
+function_command <- function(label, nlocal) {
+  # TODO: initialize locals
+  sym(label)
 }
 
 label_generator <- function() {
