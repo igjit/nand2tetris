@@ -76,7 +76,8 @@ dispatch_table <- list(
                                "0;JMP"),
   `if-goto` = function(arg1, ...) if_goto_command(arg1),
   `function` = function(arg1, arg2, ...) function_command(arg1, arg2),
-  `return` = function(...) return_command())
+  `return` = function(...) return_command(),
+  call = function(arg1, arg2, gen_label) call_command(arg1, arg2, gen_label))
 
 compare_command <- function(jump, label) {
   c("@SP",
@@ -112,6 +113,16 @@ push_command <- function(base, index) {
     at(base),
     "A=D+M",
     "D=M",
+    "@SP",
+    "A=M",
+    "M=D",
+    "@SP",
+    "M=M+1")
+}
+
+push_label_command <- function(label) {
+  c(at(label),
+    "D=A",
     "@SP",
     "A=M",
     "M=D",
@@ -192,6 +203,28 @@ return_command <- function() {
     "M=D", # LCL = *(FRAME-4)
     load_to_d("R14", -5), # RET = *(FRAME-5)
     "D;JMP")
+}
+
+call_command <- function(f, n, gen_label) {
+  return_address <- gen_label()
+  c(push_label_command(return_address),
+    push_address_command("LCL"),
+    push_address_command("ARG"),
+    push_address_command("THIS"),
+    push_address_command("THAT"),
+    "@SP",
+    "D=M",
+    at(n + 5),
+    "D=D-A",
+    "@ARG",
+    "M=D", # ARG = SP-n-5
+    "@SP",
+    "D=M",
+    "@LCL",
+    "M=D", # LCL = SP
+    at(f),
+    "0;JMP", # goto f
+    sym(return_address))
 }
 
 load_to_d <- function(base, index) {
