@@ -1,4 +1,14 @@
 parse <- function(filename) {
+  if (str_ends(filename, "\\.vm")) {
+    parse_file(filename)
+  } else {
+    list.files(filename, "*.vm", full.names = TRUE) %>%
+      map(parse_file) %>%
+      flatten
+  }
+}
+
+parse_file <- function(filename) {
   readLines(filename) %>%
     extract_commands %>%
     map(parse_command)
