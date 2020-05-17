@@ -215,7 +215,8 @@ return_command <- function() {
     "@LCL",
     "M=D", # LCL = *(FRAME-4)
     load_to_d("R14", -5), # RET = *(FRAME-5)
-    "D;JMP")
+    "A=D",
+    "0;JMP")
 }
 
 call_command <- function(f, n, gen_label) {
