@@ -75,7 +75,8 @@ dispatch_table <- list(
   goto = function(arg1, ...) c(at(arg1),
                                "0;JMP"),
   `if-goto` = function(arg1, ...) if_goto_command(arg1),
-  `function` = function(arg1, arg2, ...) function_command(arg1, arg2))
+  `function` = function(arg1, arg2, ...) function_command(arg1, arg2),
+  `return` = function(...) return_command())
 
 compare_command <- function(jump, label) {
   c("@SP",
@@ -165,6 +166,42 @@ if_goto_command <- function(label) {
 function_command <- function(label, nlocal) {
   # TODO: initialize locals
   sym(label)
+}
+
+return_command <- function() {
+  c("@LCL",
+    "D=M",
+    "@R14", # FRAME
+    "M=D",
+    pop_command("ARG", 0),
+    "@ARG",
+    "D=M+1",
+    "@SP",
+    "M=D", # SP = ARG+1
+    load_to_d("R14", -1),
+    "@THAT",
+    "M=D", # THAT = *(FRAME-1)
+    load_to_d("R14", -2),
+    "@THIS",
+    "M=D", # THIS = *(FRAME-2)
+    load_to_d("R14", -3),
+    "@ARG",
+    "M=D", # ARG = *(FRAME-3)
+    load_to_d("R14", -4),
+    "@LCL",
+    "M=D", # LCL = *(FRAME-4)
+    load_to_d("R14", -5), # RET = *(FRAME-5)
+    "D;JMP")
+}
+
+load_to_d <- function(base, index) {
+  if (index > 0) stop()
+  c(at(base),
+    "D=M",
+    at(abs(index)),
+    "D=D-A",
+    "A=D",
+    "D=M")
 }
 
 label_generator <- function() {
