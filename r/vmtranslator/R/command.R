@@ -197,6 +197,9 @@ return_command <- function() {
     "D=M",
     "@R14", # FRAME
     "M=D",
+    load_to_d("R14", -5),
+    "@R15", # RET
+    "M=D",  # RET = *(FRAME-5)
     pop_command("ARG", 0),
     "@ARG",
     "D=M+1",
@@ -214,8 +217,8 @@ return_command <- function() {
     load_to_d("R14", -4),
     "@LCL",
     "M=D", # LCL = *(FRAME-4)
-    load_to_d("R14", -5), # RET = *(FRAME-5)
-    "A=D",
+    "@R15",
+    "A=M",
     "0;JMP")
 }
 
