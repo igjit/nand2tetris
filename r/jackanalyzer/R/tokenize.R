@@ -4,6 +4,13 @@ KEYWORDS <- c("class", "constructor", "function", "method", "field", "static",
 
 keyword_regexp <- str_c("(", str_c(KEYWORDS, collapse = "|"), ")")
 
+read_jack <- function(file) {
+  readLines(file) %>%
+    str_remove("//.+") %>%
+    str_c(collapse = " ") %>%
+    str_remove_all("/\\*.+?\\*/")
+}
+
 #' @import purrr
 #' @import stringr
 tokenize <- function(s) {
