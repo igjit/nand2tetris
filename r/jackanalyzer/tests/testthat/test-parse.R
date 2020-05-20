@@ -2,6 +2,11 @@ test_that("parse_class works", {
   state <- new_state()
   expect_s3_class(parse_class(tokenize("class Main {}"), state), "class_node")
   expect_equal(state$i, 5)
+
+  node <- parse_class(tokenize("class Main { static char a; field int x; }"),
+                      new_state())
+  class_var_dec_nodes <- keep(node$elements, ~ is(., "class_var_dec_node"))
+  expect_equal(length(class_var_dec_nodes), 2)
 })
 
 test_that("parse_class_var_dec works", {

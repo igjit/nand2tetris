@@ -9,6 +9,11 @@ parse_class <- function(tokens, state) {
   elements <- tokens[(state$i):(state$i + 2)]
   inc(state, 3)
 
+  # classVarDec*
+  while (is_keyword_in(tokens[[state$i]], c("static", "field"))) {
+    elements <- c(elements, list(parse_class_var_dec(tokens, state)))
+  }
+
   if (!identical(tokens[[state$i]], symbol_token("}"))) stop()
   elements <- c(elements, list(tokens[[state$i]]))
   inc(state)
