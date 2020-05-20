@@ -20,6 +20,14 @@ new_state <- function() as.environment(list(i = 1))
 
 inc <- function(state, n = 1) state$i <- state$i + n
 
+is_type <- function(token) {
+  is_keyword_in(token, c("int", "char", "boolean")) || is(token, "identifier_token")
+}
+
+is_keyword_in <- function(token, keywords) {
+  is(token, "keyword_token") && token$keyword %in% keywords
+}
+
 class_node <- function(elements) {
   structure(list(name = "class", elements = elements), class = c("class_node", "node"))
 }
