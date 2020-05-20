@@ -20,6 +20,22 @@ new_state <- function() as.environment(list(i = 1))
 
 inc <- function(state, n = 1) state$i <- state$i + n
 
+parse_class_var_dec <- function(tokens, state) {
+  from <- state$i
+  if (!is_type(tokens[[state$i + 1]])) stop()
+  inc(state, 2) # ('static' | 'field') type
+
+  while(!identical(tokens[[state$i]], symbol_token(";"))) {
+    inc(state) # varName
+    if (identical(tokens[[state$i]], symbol_token(","))) {
+      inc(state) # ','
+    }
+  }
+  to <- state$i
+  inc(state)
+  class_var_dec_node(tokens[from:to])
+}
+
 is_type <- function(token) {
   is_keyword_in(token, c("int", "char", "boolean")) || is(token, "identifier_token")
 }
@@ -30,4 +46,8 @@ is_keyword_in <- function(token, keywords) {
 
 class_node <- function(elements) {
   structure(list(name = "class", elements = elements), class = c("class_node", "node"))
+}
+
+class_var_dec_node <- function(elements) {
+  structure(list(name = "classVarDec", elements = elements), class = c("class_var_dec_node", "node"))
 }
