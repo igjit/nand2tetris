@@ -21,6 +21,15 @@ test_that("parse_class_var_dec works", {
   expect_equal(state$i, 7)
 })
 
+test_that("parse_expression works", {
+  state <- new_state()
+  token <- identifier_token("x")
+  node <- parse_expression(list(token), state)
+  expect_s3_class(node, "expression_node")
+  expect_equal(node$elements[[1]]$elements[[1]], token)
+  expect_equal(state$i, 2)
+})
+
 test_that("is_type works", {
   expect_true(is_type(keyword_token("int")))
   expect_true(is_type(identifier_token("Array")))

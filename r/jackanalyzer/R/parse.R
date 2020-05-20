@@ -41,6 +41,13 @@ parse_class_var_dec <- function(tokens, state) {
   class_var_dec_node(tokens[from:to])
 }
 
+parse_expression <- function(tokens, state) {
+  # TODO
+  if (!is(token <- tokens[[state$i]], "identifier_token")) stop("TODO")
+  inc(state)
+  expression_node(list(term_node(list(token))))
+}
+
 is_type <- function(token) {
   is_keyword_in(token, c("int", "char", "boolean")) || is(token, "identifier_token")
 }
@@ -57,4 +64,12 @@ class_node <- function(elements) {
 
 class_var_dec_node <- function(elements) {
   structure(list(name = "classVarDec", elements = elements), class = c("class_var_dec_node", "node"))
+}
+
+expression_node <- function(elements) {
+  structure(list(name = "expression", elements = elements), class = c("expression_node", "node"))
+}
+
+term_node <- function(elements) {
+  structure(list(name = "term", elements = elements), class = c("term_node", "node"))
 }
