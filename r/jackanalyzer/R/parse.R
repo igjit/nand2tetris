@@ -3,9 +3,9 @@ parse <- function(tokens) {
 }
 
 parse_class <- function(tokens, state) {
-  if (!identical(tokens[[state$i]], keyword_token("class"))) stop()
+  if (!is_token_of(tokens[[state$i]], "class")) stop()
   if (!is(tokens[[state$i + 1]], "identifier_token")) stop()
-  if (!identical(tokens[[state$i + 2]], symbol_token("{"))) stop()
+  if (!is_token_of(tokens[[state$i + 2]], "{")) stop()
   elements <- tokens[(state$i):(state$i + 2)]
   inc(state, 3)
 
@@ -14,7 +14,7 @@ parse_class <- function(tokens, state) {
     elements <- c(elements, list(parse_class_var_dec(tokens, state)))
   }
 
-  if (!identical(tokens[[state$i]], symbol_token("}"))) stop()
+  if (!is_token_of(tokens[[state$i]], "}")) stop()
   elements <- c(elements, list(tokens[[state$i]]))
   inc(state)
 
@@ -30,9 +30,9 @@ parse_class_var_dec <- function(tokens, state) {
   if (!is_type(tokens[[state$i + 1]])) stop()
   inc(state, 2) # ('static' | 'field') type
 
-  while(!identical(tokens[[state$i]], symbol_token(";"))) {
+  while(!is_token_of(tokens[[state$i]], ";")) {
     inc(state) # varName
-    if (identical(tokens[[state$i]], symbol_token(","))) {
+    if (is_token_of(tokens[[state$i]], ",")) {
       inc(state) # ','
     }
   }
@@ -48,6 +48,8 @@ is_type <- function(token) {
 is_keyword_in <- function(token, keywords) {
   is(token, "keyword_token") && token$keyword %in% keywords
 }
+
+is_token_of <- function(token, val) token[[1]] == val
 
 class_node <- function(elements) {
   structure(list(name = "class", elements = elements), class = c("class_node", "node"))
