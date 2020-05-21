@@ -21,6 +21,35 @@ test_that("parse_class_var_dec works", {
   expect_equal(state$i, 7)
 })
 
+test_that("parse_subroutine_body works", {
+  state <- new_state()
+  tokens <- tokenize("{ return x; }")
+  expect_s3_class(parse_subroutine_body(tokens, state), "subroutine_body_node")
+  expect_equal(state$i, 6)
+
+  state <- new_state()
+  tokens <- tokenize("{ var int x; return x; }")
+  expect_s3_class(parse_subroutine_body(tokens, state), "subroutine_body_node")
+  expect_equal(state$i, 10)
+
+  state <- new_state()
+  tokens <- tokenize("{ var int x; var char c; return x; }")
+  expect_s3_class(parse_subroutine_body(tokens, state), "subroutine_body_node")
+  expect_equal(state$i, 14)
+})
+
+test_that("parse_var_dec works", {
+  state <- new_state()
+  tokens <- tokenize("var int x;")
+  expect_s3_class(parse_var_dec(tokens, state), "var_dec_node")
+  expect_equal(state$i, 5)
+
+  state <- new_state()
+  tokens <- tokenize("var int x, y;")
+  expect_s3_class(parse_var_dec(tokens, state), "var_dec_node")
+  expect_equal(state$i, 7)
+})
+
 test_that("parse_parameter_list works", {
   state <- new_state(i = 2)
   tokens <- tokenize("()")
