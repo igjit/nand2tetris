@@ -25,6 +25,13 @@ new_state <- function() as.environment(list(i = 1))
 
 inc <- function(state, n = 1) state$i <- state$i + n
 
+pop_token_of <- function(tokens, state, val) {
+  if (!is_token_of(tokens[[state$i]], val)) stop()
+  token <- tokens[[state$i]]
+  inc(state)
+  token
+}
+
 parse_class_var_dec <- function(tokens, state) {
   from <- state$i
   if (!is_type(tokens[[state$i + 1]])) stop()
@@ -39,6 +46,26 @@ parse_class_var_dec <- function(tokens, state) {
   to <- state$i
   inc(state)
   class_var_dec_node(tokens[from:to])
+}
+
+parse_let_statement <- function(tokens, state) {
+  if (!is_token_of(tokens[[state$i]], "let")) stop()
+  # let varName
+  elements <- tokens[state$i + 0:1]
+  inc(state, 2)
+
+  if (is_token_of(tokens[[state$i]], "[")) {
+    elements <- c(elements,
+                  list(pop_token_of(tokens, state, "["),
+                       parse_expression(tokens, state),
+                       pop_token_of(tokens, state, "]")))
+  }
+  elements <- c(elements,
+                list(pop_token_of(tokens, state, "="),
+                     parse_expression(tokens, state),
+                     pop_token_of(tokens, state, ";")))
+
+  structure(list(name = "letStatement", elements = elements), class = c("let_statement_node", "node"))
 }
 
 parse_expression <- function(tokens, state) {

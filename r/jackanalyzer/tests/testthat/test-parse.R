@@ -21,6 +21,18 @@ test_that("parse_class_var_dec works", {
   expect_equal(state$i, 7)
 })
 
+test_that("parse_let_statement works", {
+  state <- new_state()
+  tokens <- tokenize("let a = x;")
+  expect_s3_class(parse_let_statement(tokens, state), "let_statement_node")
+  expect_equal(state$i, 6)
+
+  state <- new_state()
+  tokens <- tokenize("let b[i] = x;")
+  expect_s3_class(parse_let_statement(tokens, state), "let_statement_node")
+  expect_equal(state$i, 9)
+})
+
 test_that("parse_expression works", {
   state <- new_state()
   token <- identifier_token("x")
