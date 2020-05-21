@@ -48,6 +48,25 @@ parse_class_var_dec <- function(tokens, state) {
   class_var_dec_node(tokens[from:to])
 }
 
+parse_statements <- function(tokens, state) {
+  elements <- list()
+  while(is_beginning_of_statement(tokens, state)) {
+    elements <- c(elements, list(parse_statement(tokens, state)))
+  }
+
+  structure(list(name = "statements", elements = elements), class = c("statements_node", "node"))
+}
+
+is_beginning_of_statement <- function(tokens, state) {
+  state$i <= length(tokens) &&
+    is_keyword_in(tokens[[state$i]], c("let", "if", "while", "do", "return"))
+}
+
+parse_statement <- function(tokens, state) {
+  fname <- str_c("parse_", tokens[[state$i]]$keyword, "_statement")
+  do.call(fname, list(tokens, state))
+}
+
 parse_let_statement <- function(tokens, state) {
   if (!is_token_of(tokens[[state$i]], "let")) stop()
   # let varName
