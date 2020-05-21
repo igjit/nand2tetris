@@ -113,6 +113,18 @@ parse_if_statement <- function(tokens, state) {
     structure(list(name = "ifStatement", elements = elements), class = c("if_statement_node", "node"))
 }
 
+parse_while_statement <- function(tokens, state) {
+  elements <- list(pop_token_of(tokens, state, "while"),
+                   pop_token_of(tokens, state, "("),
+                   parse_expression(tokens, state),
+                   pop_token_of(tokens, state, ")"),
+                   pop_token_of(tokens, state, "{"),
+                   parse_statements(tokens, state),
+                   pop_token_of(tokens, state, "}"))
+
+    structure(list(name = "whileStatement", elements = elements), class = c("while_statement_node", "node"))
+}
+
 parse_do_statement <- function(tokens, state) {
   elements <- list(pop_token_of(tokens, state, "do"),
                    parse_subroutine_call(tokens, state),

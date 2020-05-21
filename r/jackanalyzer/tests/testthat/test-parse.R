@@ -55,6 +55,13 @@ test_that("parse_if_statement works", {
   expect_equal(state$i, 16)
 })
 
+test_that("parse_while_statement works", {
+  state <- new_state()
+  tokens <- tokenize("while (x) { do foo(); }")
+  expect_s3_class(parse_while_statement(tokens, state), "while_statement_node")
+  expect_equal(state$i, 12)
+})
+
 test_that("parse_do_statement works", {
   state <- new_state()
   tokens <- tokenize("do foo();")
