@@ -76,6 +76,23 @@ test_that("parse_expression works", {
   expect_equal(state$i, 2)
 })
 
+test_that("parse_expression_list works", {
+  state <- new_state(i = 2)
+  token <- tokenize("()")
+  expect_s3_class(parse_expression_list(token, state), "expression_list_node")
+  expect_equal(state$i, 2)
+
+  state <- new_state(i = 2)
+  token <- tokenize("(a)")
+  expect_s3_class(parse_expression_list(token, state), "expression_list_node")
+  expect_equal(state$i, 3)
+
+  state <- new_state(i = 2)
+  token <- tokenize("(a, b)")
+  expect_s3_class(parse_expression_list(token, state), "expression_list_node")
+  expect_equal(state$i, 5)
+})
+
 test_that("is_type works", {
   expect_true(is_type(keyword_token("int")))
   expect_true(is_type(identifier_token("Array")))

@@ -21,7 +21,7 @@ parse_class <- function(tokens, state) {
   class_node(elements)
 }
 
-new_state <- function() as.environment(list(i = 1))
+new_state <- function(i = 1) as.environment(list(i = i))
 
 inc <- function(state, n = 1) state$i <- state$i + n
 
@@ -121,6 +121,18 @@ parse_expression <- function(tokens, state) {
   if (!is(token <- tokens[[state$i]], "identifier_token")) stop("TODO")
   inc(state)
   expression_node(list(term_node(list(token))))
+}
+
+parse_expression_list <- function(tokens, state) {
+  elements <- list()
+  while(!is_token_of(tokens[[state$i]], ")")) {
+    elements <- c(elements, list(parse_expression(tokens, state)))
+    if (is_token_of(tokens[[state$i]], ",")) {
+      elements <- c(elements, list(pop_token_of(tokens, state, ",")))
+    }
+  }
+
+  structure(list(name = "expressionList", elements = elements), class = c("expression_list_node", "node"))
 }
 
 is_type <- function(token) {
