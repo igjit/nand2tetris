@@ -41,6 +41,11 @@ pop_identifier_token <- function(tokens, state) {
   pop(tokens, state)
 }
 
+pop_type_token <- function(tokens, state) {
+  if (!is_type(tokens[[state$i]])) stop()
+  pop(tokens, state)
+}
+
 parse_class_var_dec <- function(tokens, state) {
   from <- state$i
   if (!is_type(tokens[[state$i + 1]])) stop()
@@ -55,6 +60,20 @@ parse_class_var_dec <- function(tokens, state) {
   to <- state$i
   inc(state)
   class_var_dec_node(tokens[from:to])
+}
+
+parse_parameter_list <- function(tokens, state) {
+  elements <- list()
+  while(!is_token_of(tokens[[state$i]], ")")) {
+    elements <- c(elements,
+                  list(pop_type_token(tokens, state),
+                       pop_identifier_token(tokens, state)))
+    if (is_token_of(tokens[[state$i]], ",")) {
+      elements <- c(elements, list(pop_token_of(tokens, state, ",")))
+    }
+  }
+
+  structure(list(name = "parameterList", elements = elements), class = c("parameter_list_node", "node"))
 }
 
 parse_statements <- function(tokens, state) {
