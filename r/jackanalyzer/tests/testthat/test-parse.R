@@ -43,6 +43,18 @@ test_that("parse_let_statement works", {
   expect_equal(state$i, 9)
 })
 
+test_that("parse_if_statement works", {
+  state <- new_state()
+  tokens <- tokenize("if (x) { return a; }")
+  expect_s3_class(parse_if_statement(tokens, state), "if_statement_node")
+  expect_equal(state$i, 10)
+
+  state <- new_state()
+  tokens <- tokenize("if (x) { return a; } else { return b; }")
+  expect_s3_class(parse_if_statement(tokens, state), "if_statement_node")
+  expect_equal(state$i, 16)
+})
+
 test_that("parse_return_statement works", {
   state <- new_state()
   tokens <- tokenize("return;")

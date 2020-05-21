@@ -87,6 +87,25 @@ parse_let_statement <- function(tokens, state) {
   structure(list(name = "letStatement", elements = elements), class = c("let_statement_node", "node"))
 }
 
+parse_if_statement <- function(tokens, state) {
+  elements <- list(pop_token_of(tokens, state, "if"),
+                   pop_token_of(tokens, state, "("),
+                   parse_expression(tokens, state),
+                   pop_token_of(tokens, state, ")"),
+                   pop_token_of(tokens, state, "{"),
+                   parse_statements(tokens, state),
+                   pop_token_of(tokens, state, "}"))
+  if (state$i <= length(tokens) && is_token_of(tokens[[state$i]], "else")) {
+    elements <- c(elements,
+                  list(pop_token_of(tokens, state, "else"),
+                       pop_token_of(tokens, state, "{"),
+                       parse_statements(tokens, state),
+                       pop_token_of(tokens, state, "}")))
+    }
+
+    structure(list(name = "ifStatement", elements = elements), class = c("if_statement_node", "node"))
+}
+
 parse_return_statement <- function(tokens, state) {
   elements <- list(pop_token_of(tokens, state, "return"))
   if (!is_token_of(tokens[[state$i]], ";")) {
