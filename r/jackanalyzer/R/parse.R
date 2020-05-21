@@ -32,6 +32,13 @@ pop_token_of <- function(tokens, state, val) {
   token
 }
 
+pop_identifier_token <- function(tokens, state) {
+  if (!is(tokens[[state$i]], "identifier_token")) stop()
+  token <- tokens[[state$i]]
+  inc(state)
+  token
+}
+
 parse_class_var_dec <- function(tokens, state) {
   from <- state$i
   if (!is_type(tokens[[state$i + 1]])) stop()
@@ -106,6 +113,14 @@ parse_if_statement <- function(tokens, state) {
     structure(list(name = "ifStatement", elements = elements), class = c("if_statement_node", "node"))
 }
 
+parse_do_statement <- function(tokens, state) {
+  elements <- list(pop_token_of(tokens, state, "do"),
+                   parse_subroutine_call(tokens, state),
+                   pop_token_of(tokens, state, ";"))
+
+    structure(list(name = "doStatement", elements = elements), class = c("do_statement_node", "node"))
+}
+
 parse_return_statement <- function(tokens, state) {
   elements <- list(pop_token_of(tokens, state, "return"))
   if (!is_token_of(tokens[[state$i]], ";")) {
@@ -121,6 +136,19 @@ parse_expression <- function(tokens, state) {
   if (!is(token <- tokens[[state$i]], "identifier_token")) stop("TODO")
   inc(state)
   expression_node(list(term_node(list(token))))
+}
+
+parse_subroutine_call <- function(tokens, state) {
+  elements <- list(pop_identifier_token(tokens, state))
+  if(is_token_of(tokens[[state$i]], ".")) {
+    elements <- c(elements,
+                  list(pop_token_of(tokens, state, "."),
+                       pop_identifier_token(tokens, state)))
+  }
+  c(elements,
+    list(pop_token_of(tokens, state, "("),
+         parse_expression_list(tokens, state),
+         pop_token_of(tokens, state, ")")))
 }
 
 parse_expression_list <- function(tokens, state) {

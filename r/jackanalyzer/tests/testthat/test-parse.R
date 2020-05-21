@@ -55,6 +55,13 @@ test_that("parse_if_statement works", {
   expect_equal(state$i, 16)
 })
 
+test_that("parse_do_statement works", {
+  state <- new_state()
+  tokens <- tokenize("do foo();")
+  expect_s3_class(parse_do_statement(tokens, state), "do_statement_node")
+  expect_equal(state$i, 6)
+})
+
 test_that("parse_return_statement works", {
   state <- new_state()
   tokens <- tokenize("return;")
@@ -74,6 +81,18 @@ test_that("parse_expression works", {
   expect_s3_class(node, "expression_node")
   expect_equal(node$elements[[1]]$elements[[1]], token)
   expect_equal(state$i, 2)
+})
+
+test_that("parse_subroutine_call works", {
+  state <- new_state()
+  tokens <- tokenize("bar()")
+  expect_type(parse_subroutine_call(tokens, state), "list")
+  expect_equal(state$i, 4)
+
+  state <- new_state()
+  tokens <- tokenize("foo.bar()")
+  expect_type(parse_subroutine_call(tokens, state), "list")
+  expect_equal(state$i, 6)
 })
 
 test_that("parse_expression_list works", {
