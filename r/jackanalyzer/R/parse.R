@@ -62,6 +62,20 @@ parse_class_var_dec <- function(tokens, state) {
   class_var_dec_node(tokens[from:to])
 }
 
+parse_subroutine_dec <- function(tokens, state) {
+  if (!is_keyword_in(tokens[[state$i]], c("constructor", "function", "method"))) stop()
+  if(!is_token_of(tokens[[state$i + 1]], "void") && !is_type(tokens[[state$i + 1]])) stop()
+  elements <- list(pop(tokens, state),
+                   pop(tokens, state),
+                   pop_identifier_token(tokens, state),
+                   pop_token_of(tokens, state, "("),
+                   parse_parameter_list(tokens, state),
+                   pop_token_of(tokens, state, ")"),
+                   parse_subroutine_body(tokens, state))
+
+  structure(list(name = "subroutineDec", elements = elements), class = c("subroutine_dec_node", "node"))
+}
+
 parse_subroutine_body <- function(tokens, state) {
   elements <- list(pop_token_of(tokens, state, "{"))
   while(is_token_of(tokens[[state$i]], "var")) {
