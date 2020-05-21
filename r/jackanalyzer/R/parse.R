@@ -25,18 +25,20 @@ new_state <- function(i = 1) as.environment(list(i = i))
 
 inc <- function(state, n = 1) state$i <- state$i + n
 
-pop_token_of <- function(tokens, state, val) {
-  if (!is_token_of(tokens[[state$i]], val)) stop()
+pop <- function(tokens, state) {
   token <- tokens[[state$i]]
   inc(state)
   token
 }
 
+pop_token_of <- function(tokens, state, val) {
+  if (!is_token_of(tokens[[state$i]], val)) stop()
+  pop(tokens, state)
+}
+
 pop_identifier_token <- function(tokens, state) {
   if (!is(tokens[[state$i]], "identifier_token")) stop()
-  token <- tokens[[state$i]]
-  inc(state)
-  token
+  pop(tokens, state)
 }
 
 parse_class_var_dec <- function(tokens, state) {
