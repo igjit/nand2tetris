@@ -33,6 +33,18 @@ test_that("parse_let_statement works", {
   expect_equal(state$i, 9)
 })
 
+test_that("parse_return_statement works", {
+  state <- new_state()
+  tokens <- tokenize("return;")
+  expect_s3_class(parse_return_statement(tokens, state), "return_statement_node")
+  expect_equal(state$i, 3)
+
+  state <- new_state()
+  tokens <- tokenize("return x;")
+  expect_s3_class(parse_return_statement(tokens, state), "return_statement_node")
+  expect_equal(state$i, 4)
+})
+
 test_that("parse_expression works", {
   state <- new_state()
   token <- identifier_token("x")

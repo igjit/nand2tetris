@@ -68,6 +68,16 @@ parse_let_statement <- function(tokens, state) {
   structure(list(name = "letStatement", elements = elements), class = c("let_statement_node", "node"))
 }
 
+parse_return_statement <- function(tokens, state) {
+  elements <- list(pop_token_of(tokens, state, "return"))
+  if (!is_token_of(tokens[[state$i]], ";")) {
+    elements <- c(elements, list(parse_expression(tokens, state)))
+  }
+  elements <- c(elements, list(pop_token_of(tokens, state, ";")))
+
+  structure(list(name = "returnStatement", elements = elements), class = c("return_statement_node", "node"))
+}
+
 parse_expression <- function(tokens, state) {
   # TODO
   if (!is(token <- tokens[[state$i]], "identifier_token")) stop("TODO")
