@@ -14,6 +14,11 @@ parse_class <- function(tokens, state) {
     elements <- c(elements, list(parse_class_var_dec(tokens, state)))
   }
 
+  # subroutineDec*
+  while(is_beginning_of_subroutine_dec(tokens, state)) {
+    elements <- c(elements, list(parse_subroutine_dec(tokens, state)))
+  }
+
   if (!is_token_of(tokens[[state$i]], "}")) stop()
   elements <- c(elements, list(tokens[[state$i]]))
   inc(state)

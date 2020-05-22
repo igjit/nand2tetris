@@ -7,6 +7,9 @@ test_that("parse_class works", {
                       new_state())
   class_var_dec_nodes <- keep(node$elements, ~ is(., "class_var_dec_node"))
   expect_equal(length(class_var_dec_nodes), 2)
+
+  tokens <- tokenize("class Main { function int foo(int x) {  return x; } }")
+  expect_s3_class(parse_class(tokens, new_state())$elements[[4]], "subroutine_dec_node")
 })
 
 test_that("parse_class_var_dec works", {
