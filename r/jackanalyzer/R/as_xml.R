@@ -4,8 +4,19 @@ ELEMENT_NAMES <- c(keyword_token = "keyword",
                    string_const_token = "stringConstant",
                    identifier_token = "identifier")
 
+#' @importFrom methods is
+as_xml <- function(x) {
+  if (is(x[[1]], "token")) {
+    tokens_to_xml(x)
+  } else if (is(x, "node")) {
+    node_to_xml(x)
+  } else {
+    stop()
+  }
+}
+
 #' @import xml2
-as_xml <- function(tokens) {
+tokens_to_xml <- function(tokens) {
   elm_names <- map_chr(tokens, element_name)
   values <- map(tokens, ~ list(str_c(" ", .[[1]], " ")))
   names(values) <- elm_names
