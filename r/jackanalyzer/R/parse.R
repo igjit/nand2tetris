@@ -216,6 +216,11 @@ parse_return_statement <- function(tokens, state) {
 
 parse_expression <- function(tokens, state) {
   elements <- list(parse_term(tokens, state))
+  while(state$i <= length(tokens) && is_op(tokens[[state$i]])) {
+    elements <- c(elements,
+                  list(pop(tokens, state),
+                       parse_term(tokens, state)))
+  }
   expression_node(elements)
 }
 
@@ -253,6 +258,11 @@ parse_expression_list <- function(tokens, state) {
 
 is_type <- function(token) {
   is_keyword_in(token, c("int", "char", "boolean")) || is(token, "identifier_token")
+}
+
+is_op <- function(token) {
+  is(token, "symbol_token") &&
+    token$symbol %in% c("+", "-", "*", "/", "&", "|", "<", ">", "=")
 }
 
 is_keyword_in <- function(token, keywords) {

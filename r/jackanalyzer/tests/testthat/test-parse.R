@@ -144,6 +144,15 @@ test_that("parse_expression works", {
   expect_s3_class(node, "expression_node")
   expect_equal(node$elements[[1]]$elements[[1]], token)
   expect_equal(state$i, 2)
+
+  state <- new_state()
+  tokens <- tokenize("x + y")
+  node <- parse_expression(tokens, state)
+  expect_s3_class(node, "expression_node")
+  expect_equal(node$elements[[1]]$elements[[1]], identifier_token("x"))
+  expect_equal(node$elements[[2]], symbol_token("+"))
+  expect_equal(node$elements[[3]]$elements[[1]], identifier_token("y"))
+  expect_equal(state$i, 4)
 })
 
 test_that("parse_subroutine_call works", {
