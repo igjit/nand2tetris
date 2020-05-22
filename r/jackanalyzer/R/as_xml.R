@@ -13,4 +13,20 @@ as_xml <- function(tokens) {
     as_xml_document
 }
 
+node_to_xml <- function(node) {
+  node_to_list(node) %>%
+    list %>%
+    set_names(node$name) %>%
+    as_xml_document
+}
+
+node_to_list <- function(node) {
+  elm_names <- node$elements %>%
+    map_chr(~ if (is(., "node")) .$name else element_name(.))
+  node$elements %>%
+    map(~ if (is(., "node")) node_to_list(.)
+          else list(str_c(" ", .[[1]][[1]], " "))) %>%
+    set_names(elm_names)
+}
+
 element_name <- function(token) unname(ELEMENT_NAMES[class(token)[1]])
