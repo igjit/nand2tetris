@@ -226,9 +226,9 @@ parse_expression <- function(tokens, state) {
 
 parse_term <- function(tokens, state) {
   # TODO
-  if (!is(token <- tokens[[state$i]], "identifier_token")) stop("TODO")
-  inc(state)
-  term_node(list(token))
+  if (!is(tokens[[state$i]], "identifier_token") && !is_keyword_constant(tokens[[state$i]])) stop("TODO")
+  elements <- list(pop(tokens, state))
+  term_node(elements)
 }
 
 parse_subroutine_call <- function(tokens, state) {
@@ -263,6 +263,10 @@ is_type <- function(token) {
 is_op <- function(token) {
   is(token, "symbol_token") &&
     token$symbol %in% c("+", "-", "*", "/", "&", "|", "<", ">", "=")
+}
+
+is_keyword_constant <- function(token) {
+  is_keyword_in(token, c("true", "false", "null", "this"))
 }
 
 is_keyword_in <- function(token, keywords) {

@@ -155,6 +155,23 @@ test_that("parse_expression works", {
   expect_equal(state$i, 4)
 })
 
+test_that("parse_term works", {
+  state <- new_state()
+  token <- identifier_token("x")
+  node <- parse_term(list(token), state)
+  expect_s3_class(node, "term_node")
+  expect_equal(node$elements[[1]], token)
+  expect_equal(state$i, 2)
+
+  state <- new_state()
+  token <- keyword_token("true")
+  node <- parse_term(list(token), state)
+  expect_s3_class(node, "term_node")
+  expect_equal(node$elements[[1]], token)
+  expect_equal(state$i, 2)
+})
+
+
 test_that("parse_subroutine_call works", {
   state <- new_state()
   tokens <- tokenize("bar()")
