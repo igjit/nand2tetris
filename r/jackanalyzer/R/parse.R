@@ -197,9 +197,9 @@ parse_while_statement <- function(tokens, state) {
 }
 
 parse_do_statement <- function(tokens, state) {
-  elements <- list(pop_token_of(tokens, state, "do"),
-                   parse_subroutine_call(tokens, state),
-                   pop_token_of(tokens, state, ";"))
+  elements <- c(list(pop_token_of(tokens, state, "do")),
+                parse_subroutine_call(tokens, state),
+                list(pop_token_of(tokens, state, ";")))
 
     structure(list(name = "doStatement", elements = elements), class = c("do_statement_node", "node"))
 }
