@@ -215,10 +215,15 @@ parse_return_statement <- function(tokens, state) {
 }
 
 parse_expression <- function(tokens, state) {
+  elements <- list(parse_term(tokens, state))
+  expression_node(elements)
+}
+
+parse_term <- function(tokens, state) {
   # TODO
   if (!is(token <- tokens[[state$i]], "identifier_token")) stop("TODO")
   inc(state)
-  expression_node(list(term_node(list(token))))
+  term_node(list(token))
 }
 
 parse_subroutine_call <- function(tokens, state) {
