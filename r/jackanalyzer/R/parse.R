@@ -245,6 +245,10 @@ parse_term <- function(tokens, state) {
                   # varName
                   list(pop(tokens, state))
                 }
+              } else if (is_token_of(tokens[[state$i]], "(")) {
+                list(pop_token_of(tokens, state, "("),
+                     parse_expression(tokens, state),
+                     pop_token_of(tokens, state, ")"))
               } else {
                 # TODO
                 stop("TODO")
