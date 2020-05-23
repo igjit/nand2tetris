@@ -227,9 +227,18 @@ parse_expression <- function(tokens, state) {
 parse_term <- function(tokens, state) {
   elements <- if (is(tokens[[state$i]], "int_const_token") ||
                   is(tokens[[state$i]], "string_const_token") ||
-                  is_keyword_constant(tokens[[state$i]]) ||
-                  is(tokens[[state$i]], "identifier_token")) {
+                  is_keyword_constant(tokens[[state$i]])) {
                 list(pop(tokens, state))
+              } else if (is(tokens[[state$i]], "identifier_token")) {
+                if (state$i < length(tokens) &&
+                    is_token_of(tokens[[state$i + 1]], "[")) {
+                  list(pop(tokens, state),
+                       pop_token_of(tokens, state, "["),
+                       parse_expression(tokens, state),
+                       pop_token_of(tokens, state, "]"))
+                } else {
+                  list(pop(tokens, state))
+                }
               } else {
                 # TODO
                 stop("TODO")

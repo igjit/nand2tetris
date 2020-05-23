@@ -168,6 +168,11 @@ test_that("parse_term works", {
   expect_parse_term(string_const_token("hello"))
   expect_parse_term(keyword_token("true"))
   expect_parse_term(identifier_token("x"))
+
+  state <- new_state()
+  node <- parse_term(tokenize("x[1]"), state)
+  expect_s3_class(node, "term_node")
+  expect_equal(state$i, 5)
 })
 
 test_that("parse_subroutine_call works", {
