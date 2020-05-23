@@ -15,12 +15,12 @@ test_that("parse_class works", {
 test_that("parse_class_var_dec works", {
   state <- new_state()
   tokens <- tokenize("static char x;")
-  expect_equal(parse_class_var_dec(tokens, state), class_var_dec_node(tokens))
+  expect_s3_class(parse_class_var_dec(tokens, state), "class_var_dec_node")
   expect_equal(state$i, 5)
 
   state <- new_state()
   tokens <- tokenize("field int x, y;")
-  expect_equal(parse_class_var_dec(tokens, state), class_var_dec_node(tokens))
+  expect_s3_class(parse_class_var_dec(tokens, state), "class_var_dec_node")
   expect_equal(state$i, 7)
 })
 

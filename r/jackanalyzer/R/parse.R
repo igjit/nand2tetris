@@ -23,7 +23,7 @@ parse_class <- function(tokens, state) {
   elements <- c(elements, list(tokens[[state$i]]))
   inc(state)
 
-  class_node(elements)
+  structure(list(name = "class", elements = elements), class = c("class_node", "node"))
 }
 
 new_state <- function(i = 1) as.environment(list(i = i))
@@ -64,7 +64,8 @@ parse_class_var_dec <- function(tokens, state) {
   }
   to <- state$i
   inc(state)
-  class_var_dec_node(tokens[from:to])
+
+  structure(list(name = "classVarDec", elements = tokens[from:to]), class = c("class_var_dec_node", "node"))
 }
 
 parse_subroutine_dec <- function(tokens, state) {
@@ -221,7 +222,8 @@ parse_expression <- function(tokens, state) {
                   list(pop(tokens, state),
                        parse_term(tokens, state)))
   }
-  expression_node(elements)
+
+  structure(list(name = "expression", elements = elements), class = c("expression_node", "node"))
 }
 
 parse_term <- function(tokens, state) {
@@ -255,7 +257,8 @@ parse_term <- function(tokens, state) {
               } else {
                 stop()
               }
-  term_node(elements)
+
+  structure(list(name = "term", elements = elements), class = c("term_node", "node"))
 }
 
 parse_subroutine_call <- function(tokens, state) {
@@ -305,19 +308,3 @@ is_keyword_in <- function(token, keywords) {
 }
 
 is_token_of <- function(token, val) token[[1]] == val
-
-class_node <- function(elements) {
-  structure(list(name = "class", elements = elements), class = c("class_node", "node"))
-}
-
-class_var_dec_node <- function(elements) {
-  structure(list(name = "classVarDec", elements = elements), class = c("class_var_dec_node", "node"))
-}
-
-expression_node <- function(elements) {
-  structure(list(name = "expression", elements = elements), class = c("expression_node", "node"))
-}
-
-term_node <- function(elements) {
-  structure(list(name = "term", elements = elements), class = c("term_node", "node"))
-}
