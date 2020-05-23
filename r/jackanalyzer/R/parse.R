@@ -225,9 +225,13 @@ parse_expression <- function(tokens, state) {
 }
 
 parse_term <- function(tokens, state) {
-  # TODO
-  if (!is(tokens[[state$i]], "identifier_token") && !is_keyword_constant(tokens[[state$i]])) stop("TODO")
-  elements <- list(pop(tokens, state))
+  elements <- if (is(tokens[[state$i]], "identifier_token") ||
+                  is_keyword_constant(tokens[[state$i]])) {
+                list(pop(tokens, state))
+              } else {
+                # TODO
+                stop("TODO")
+              }
   term_node(elements)
 }
 
