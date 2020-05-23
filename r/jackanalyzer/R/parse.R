@@ -225,8 +225,10 @@ parse_expression <- function(tokens, state) {
 }
 
 parse_term <- function(tokens, state) {
-  elements <- if (is(tokens[[state$i]], "identifier_token") ||
-                  is_keyword_constant(tokens[[state$i]])) {
+  elements <- if (is(tokens[[state$i]], "int_const_token") ||
+                  is(tokens[[state$i]], "string_const_token") ||
+                  is_keyword_constant(tokens[[state$i]]) ||
+                  is(tokens[[state$i]], "identifier_token")) {
                 list(pop(tokens, state))
               } else {
                 # TODO
