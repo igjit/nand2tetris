@@ -249,9 +249,11 @@ parse_term <- function(tokens, state) {
                 list(pop_token_of(tokens, state, "("),
                      parse_expression(tokens, state),
                      pop_token_of(tokens, state, ")"))
+              } else if (is_unary_op(tokens[[state$i]])) {
+                list(pop(tokens, state),
+                     parse_term(tokens, state))
               } else {
-                # TODO
-                stop("TODO")
+                stop()
               }
   term_node(elements)
 }
@@ -288,6 +290,10 @@ is_type <- function(token) {
 is_op <- function(token) {
   is(token, "symbol_token") &&
     token$symbol %in% c("+", "-", "*", "/", "&", "|", "<", ">", "=")
+}
+
+is_unary_op <- function(token) {
+  is(token, "symbol_token") && token$symbol %in% c("-", "~")
 }
 
 is_keyword_constant <- function(token) {
