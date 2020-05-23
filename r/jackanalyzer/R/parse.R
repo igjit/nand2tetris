@@ -232,11 +232,17 @@ parse_term <- function(tokens, state) {
               } else if (is(tokens[[state$i]], "identifier_token")) {
                 if (state$i < length(tokens) &&
                     is_token_of(tokens[[state$i + 1]], "[")) {
+                  # varName '[' expression ']'
                   list(pop(tokens, state),
                        pop_token_of(tokens, state, "["),
                        parse_expression(tokens, state),
                        pop_token_of(tokens, state, "]"))
+                } else if (state$i < length(tokens) &&
+                           is_token_of(tokens[[state$i + 1]], "(")) {
+                  # subroutineCall
+                  parse_subroutine_call(tokens, state)
                 } else {
+                  # varName
                   list(pop(tokens, state))
                 }
               } else {
