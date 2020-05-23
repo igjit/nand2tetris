@@ -175,9 +175,14 @@ test_that("parse_term works", {
   expect_equal(state$i, 5)
 
   state <- new_state()
-  tokens <- tokenize("foo()")
+  tokens <- tokenize("bar()")
   expect_s3_class(parse_term(tokens, state), "term_node")
   expect_equal(state$i, 4)
+
+  state <- new_state()
+  tokens <- tokenize("foo.bar()")
+  expect_s3_class(parse_term(tokens, state), "term_node")
+  expect_equal(state$i, 6)
 
   state <- new_state()
   tokens <- tokenize("(1 + 2)")

@@ -240,7 +240,8 @@ parse_term <- function(tokens, state) {
                        parse_expression(tokens, state),
                        pop_token_of(tokens, state, "]"))
                 } else if (state$i < length(tokens) &&
-                           is_token_of(tokens[[state$i + 1]], "(")) {
+                           (is_token_of(tokens[[state$i + 1]], "(") ||
+                            is_token_of(tokens[[state$i + 1]], "."))) {
                   # subroutineCall
                   parse_subroutine_call(tokens, state)
                 } else {
