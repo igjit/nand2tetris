@@ -7,3 +7,14 @@ test_that("class_symbol_table works", {
                      index = c(0, 1, 0, 1))
   expect_equal(class_symbol_table(node), expected)
 })
+
+test_that("class_symbol_table works", {
+  code <- "method void foo(int a, String b) { var int c, d; }"
+  class_name <- "Foo"
+  node <- parse_subroutine_dec(tokenize(code), new_state())
+  expected <- tibble(name = c("this", "a", "b", "c", "d"),
+                     type = c("Foo", "int", "String", "int", "int"),
+                     kind = c("argument", "argument", "argument", "var", "var"),
+                     index = c(0, 1, 2, 0, 1))
+  expect_equal(method_symbol_table(node, class_name), expected)
+})
