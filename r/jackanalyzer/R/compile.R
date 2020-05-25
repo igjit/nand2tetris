@@ -55,6 +55,8 @@ compile_term <- function(node) {
   if (is(node$elements[[1]], "int_const_token")) {
     val <- node$elements[[1]]$int_val
     paste("push constant", val)
+  } else if (is_token_of(node$elements[[1]], "(")) {
+    compile_expression(node$elements[[2]])
   } else {
     stop("TODO")
   }
