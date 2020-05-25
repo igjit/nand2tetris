@@ -45,7 +45,9 @@ compile_expression <- function(node) {
   if (length(node$elements) == 1) {
     compile_term(node$elements[[1]])
   } else {
-    stop("TODO")
+    c(compile_term(node$elements[[1]]),
+      compile_term(node$elements[[3]]),
+      compile_op(node$elements[[2]]))
   }
 }
 
@@ -56,6 +58,14 @@ compile_term <- function(node) {
   } else {
     stop("TODO")
   }
+}
+
+compile_op <- function(token) {
+  switch(token$symbol,
+         "+" = "add",
+         "-" = "sub",
+         "*" = "call Math.multiply 2",
+         "/" = "call Math.divide 2")
 }
 
 find <- function(node, name) {

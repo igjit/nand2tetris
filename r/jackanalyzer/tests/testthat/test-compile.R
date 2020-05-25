@@ -6,4 +6,5 @@ expect_compiled <- function(jack) {
 
 test_that("compile works", {
   expect_compiled(file.path("data", "IntConstant", "Main.jack"))
+  expect_compiled(file.path("data", "Arithmetic", "Main.jack"))
 })
