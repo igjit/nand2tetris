@@ -57,6 +57,9 @@ compile_term <- function(node) {
     paste("push constant", val)
   } else if (is_token_of(node$elements[[1]], "(")) {
     compile_expression(node$elements[[2]])
+  } else if (is_token_of(node$elements[[1]], "-")) {
+    c(compile_term(node$elements[[2]]),
+      "neg")
   } else {
     stop("TODO")
   }

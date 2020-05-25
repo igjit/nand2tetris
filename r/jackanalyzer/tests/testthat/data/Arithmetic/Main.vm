@@ -2,6 +2,7 @@ function Main.main 0
 push constant 1
 push constant 2
 push constant 3
+neg
 call Math.multiply 2
 add
 call Output.printInt 1
