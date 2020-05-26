@@ -17,6 +17,13 @@ method_symbol_table <- function(method_node, class_name) {
     ungroup()
 }
 
+function_symbol_table <- function(function_node) {
+  param_var_table(function_node) %>%
+    group_by(kind) %>%
+    mutate(index = row_number() - 1) %>%
+    ungroup()
+}
+
 param_var_table <- function(node) {
   param_table <- node$elements %>%
     detect(~ is(., "parameter_list_node")) %>%
