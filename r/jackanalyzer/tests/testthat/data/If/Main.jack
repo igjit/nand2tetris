@@ -1,0 +1,17 @@
+class Main {
+  function void main() {
+    var int x;
+    var boolean b;
+    let b = true;
+    if (b) {
+      let x = 10;
+    } else {
+      let x = 20;
+    }
+    if (b) {
+      let x = 30;
+    }
+    do Output.printInt(x);
+    return;
+  }
+}

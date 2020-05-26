@@ -1,0 +1,27 @@
+function Main.main 2
+push constant 0
+not
+pop local 1
+push local 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 10
+pop local 0
+goto IF_END0
+label IF_FALSE0
+push constant 20
+pop local 0
+label IF_END0
+push local 1
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 30
+pop local 0
+label IF_FALSE1
+push local 0
+call Output.printInt 1
+pop temp 0
+push constant 0
+return

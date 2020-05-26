@@ -41,6 +41,20 @@ compile_let_statement <- function(node, lookup) {
     paste("pop local", index))
 }
 
+compile_if_statement <- function(node, lookup, counter) {
+  index <- counter("if")
+  has_else <- length(node$elements) > 10 && is_token_of(node$elements[[8]], "else")
+  c(compile_expression(node$elements[[3]], lookup),
+    str_c("if-goto IF_TRUE", index),
+    str_c("goto IF_FALSE", index),
+    str_c("label IF_TRUE", index),
+    compile_statements(node$elements[[6]], lookup, counter),
+    if (has_else) str_c("goto IF_END", index),
+    str_c("label IF_FALSE", index),
+    if (has_else) compile_statements(node$elements[[10]], lookup, counter),
+    if (has_else) str_c("label IF_END", index))
+}
+
 compile_while_statement <- function(node, lookup, counter) {
   index <- counter("while")
   c(str_c("label WHILE_EXP", index),
