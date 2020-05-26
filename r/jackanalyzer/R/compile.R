@@ -15,7 +15,12 @@ compile_function <- function(node, class_name) {
   counter <- new_counter()
   n_locals <- ftable %>% filter(kind == "var") %>% nrow
   c(paste("function", str_c(class_name, ".", fname), n_locals),
-    map(statements$elements, compile_statement, lookup, counter) %>% flatten_chr)
+    compile_statements(statements, lookup, counter))
+}
+
+compile_statements <- function(node, lookup, counter) {
+  map(node$elements, compile_statement, lookup, counter) %>%
+    flatten_chr
 }
 
 compile_statement <- function(node, lookup, counter) {
@@ -38,12 +43,11 @@ compile_let_statement <- function(node, lookup) {
 
 compile_while_statement <- function(node, lookup, counter) {
   index <- counter("while")
-  statements <- node$elements[[6]]$elements
   c(str_c("label WHILE_EXP", index),
     compile_expression(node$elements[[3]], lookup),
     "not",
     str_c("if-goto WHILE_END", index),
-    map(statements, compile_statement, lookup, counter) %>% flatten_chr,
+    compile_statements(node$elements[[6]], lookup, counter),
     str_c("goto WHILE_EXP", index),
     str_c("label WHILE_END", index))
 }
