@@ -4,6 +4,10 @@ pop local 0
 push constant 0
 not
 pop local 0
+push constant 11
+push constant 12
+lt
+pop local 1
 push local 0
 not
 pop local 1

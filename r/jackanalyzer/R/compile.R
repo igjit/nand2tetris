@@ -114,7 +114,10 @@ compile_op <- function(token) {
          "*" = "call Math.multiply 2",
          "/" = "call Math.divide 2",
          "&" = "and",
-         "|" = "or")
+         "|" = "or",
+         "<" = "lt",
+         ">" = "gt",
+         "=" = "eq")
 }
 
 compile_unary_op <- function(token) {

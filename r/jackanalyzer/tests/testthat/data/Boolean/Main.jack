@@ -3,6 +3,7 @@ class Main {
     var boolean a, b, c;
     let a = false;
     let a = true;
+    let b = 11 < 12;
     let b = ~a;
     let c = a & b;
     return;
