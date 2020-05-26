@@ -12,4 +12,5 @@ test_that("compile works", {
   expect_compiled(file.path("data", "Boolean", "Main.jack"))
   expect_compiled(file.path("data", "While", "Main.jack"))
   expect_compiled(file.path("data", "If", "Main.jack"))
+  expect_compiled(file.path("data", "String", "Main.jack"))
 })

@@ -98,6 +98,8 @@ compile_term <- function(node, lookup) {
   if (is(node$elements[[1]], "int_const_token")) {
     val <- node$elements[[1]]$int_val
     paste("push constant", val)
+  } else if (is(node$elements[[1]], "string_const_token")) {
+    compile_string_constant(node$elements[[1]])
   } else if (is_keyword_constant(node$elements[[1]])) {
     compile_keyword_constant(node$elements[[1]])
   } else if (is(node$elements[[1]], "identifier_token")) {
@@ -114,6 +116,15 @@ compile_term <- function(node, lookup) {
   } else {
     stop("TODO")
   }
+}
+
+compile_string_constant <- function(node) {
+  val <- node$string_val
+  c(paste("push constant", str_length(val)),
+    "call String.new 1",
+    utf8ToInt(val) %>%
+    map(~ c(paste("push constant", .), "call String.appendChar 2")) %>%
+    flatten_chr)
 }
 
 compile_ver_name_term <- function(node, lookup) {
