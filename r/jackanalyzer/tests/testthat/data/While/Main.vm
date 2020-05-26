@@ -1,0 +1,24 @@
+function Main.main 2
+push constant 1
+pop local 0
+label WHILE_EXP0
+push local 0
+push constant 11
+lt
+not
+if-goto WHILE_END0
+push local 1
+push local 0
+add
+pop local 1
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+call Output.printInt 1
+pop temp 0
+push constant 0
+return

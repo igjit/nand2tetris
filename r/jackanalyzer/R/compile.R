@@ -12,14 +12,20 @@ compile_function <- function(node, class_name) {
   statements <- find(node, "statements")
   ftable <- function_symbol_table(node)
   lookup <- new_lookup(ftable)
+  counter <- new_counter()
   n_locals <- ftable %>% filter(kind == "var") %>% nrow
   c(paste("function", str_c(class_name, ".", fname), n_locals),
-    map(statements$elements, compile_statement, lookup) %>% flatten_chr)
+    map(statements$elements, compile_statement, lookup, counter) %>% flatten_chr)
 }
 
-compile_statement <- function(node, lookup) {
-  fname <- str_c("compile_", pluck(node, "elements", 1, "keyword"), "_statement")
-  do.call(fname, list(node, lookup))
+compile_statement <- function(node, lookup, counter) {
+  keyword <- pluck(node, "elements", 1, "keyword")
+  fname <- str_c("compile_", keyword, "_statement")
+  if (keyword %in% c("if", "while")) {
+    do.call(fname, list(node, lookup, counter))
+  } else {
+    do.call(fname, list(node, lookup))
+  }
 }
 
 compile_let_statement <- function(node, lookup) {
@@ -28,6 +34,18 @@ compile_let_statement <- function(node, lookup) {
   index <- lookup(name)$index
   c(compile_expression(expression, lookup),
     paste("pop local", index))
+}
+
+compile_while_statement <- function(node, lookup, counter) {
+  index <- counter("while")
+  statements <- node$elements[[6]]$elements
+  c(str_c("label WHILE_EXP", index),
+    compile_expression(node$elements[[3]], lookup),
+    "not",
+    str_c("if-goto WHILE_END", index),
+    map(statements, compile_statement, lookup, counter) %>% flatten_chr,
+    str_c("goto WHILE_EXP", index),
+    str_c("label WHILE_END", index))
 }
 
 compile_do_statement <- function(node, lookup) {
@@ -139,4 +157,15 @@ find <- function(node, name) {
 
 new_lookup <- function(table) {
   function(name) filter(table, name == !!name)
+}
+
+new_counter <- function() {
+  index <- list()
+  function(name) {
+    if (is.null(index[[name]])) {
+      (index[[name]] <<- 0)
+    } else {
+      (index[[name]] <<- index[[name]] + 1)
+    }
+  }
 }
