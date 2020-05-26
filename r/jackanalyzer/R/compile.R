@@ -31,16 +31,10 @@ compile_let_statement <- function(node, lookup) {
 }
 
 compile_do_statement <- function(node, lookup) {
-  if (!is_token_of(node$elements[[3]], ".")) stop("TODO")
-  fname <- node$elements[2:4] %>%
-    map_chr(1) %>%
-    str_c(collapse = "")
-  expressions <- find(node, "expressionList") %>%
-    pluck("elements") %>%
-    discard(~ is_token_of(., ","))
+  # drop 'do'
+  term_node <- list(elements = node$elements[-1])
 
-  c(map(expressions, compile_expression, lookup) %>% flatten_chr,
-    paste("call", fname, length(expressions)),
+  c(compile_subroutine_call(term_node, lookup),
     "pop temp 0")
 }
 
@@ -80,6 +74,19 @@ compile_ver_name_term <- function(node, lookup) {
   name <- node$elements[[1]]$identifier
   index <- lookup(name)$index
   paste("push local", index)
+}
+
+compile_subroutine_call <- function(node, lookup) {
+  if (!is_token_of(node$elements[[2]], ".")) stop("TODO")
+  fname <- node$elements[1:3] %>%
+    map_chr(1) %>%
+    str_c(collapse = "")
+  expressions <- find(node, "expressionList") %>%
+    pluck("elements") %>%
+    discard(~ is_token_of(., ","))
+
+  c(map(expressions, compile_expression, lookup) %>% flatten_chr,
+    paste("call", fname, length(expressions)))
 }
 
 compile_op <- function(token) {
