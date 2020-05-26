@@ -11,21 +11,24 @@ class_symbol_table <- function(class_node) {
 
 method_symbol_table <- function(method_node, class_name) {
   class_table <- tibble(name = "this", type = class_name, kind = "argument")
+  rbind(class_table, param_var_table(method_node)) %>%
+    group_by(kind) %>%
+    mutate(index = row_number() - 1) %>%
+    ungroup()
+}
 
-  param_table <- method_node$elements %>%
+param_var_table <- function(node) {
+  param_table <- node$elements %>%
     detect(~ is(., "parameter_list_node")) %>%
     parameter_list_to_df()
 
-  var_table <- method_node$elements %>%
+  var_table <- node$elements %>%
     detect(~ is(., "subroutine_body_node")) %>%
     pluck("elements") %>%
     keep(~ is(., "var_dec_node")) %>%
     map_dfr(var_dec_to_df)
 
-  rbind(class_table, param_table, var_table) %>%
-    group_by(kind) %>%
-    mutate(index = row_number() - 1) %>%
-    ungroup()
+  rbind(param_table, var_table)
 }
 
 var_dec_to_df <- function(node) {
