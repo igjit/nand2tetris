@@ -9,4 +9,5 @@ test_that("compile works", {
   expect_compiled(file.path("data", "Arithmetic", "Main.jack"))
   expect_compiled(file.path("data", "Variable", "Main.jack"))
   expect_compiled(file.path("data", "Function", "Main.jack"))
+  expect_compiled(file.path("data", "Boolean", "Main.jack"))
 })

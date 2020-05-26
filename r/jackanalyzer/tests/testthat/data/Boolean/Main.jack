@@ -1,0 +1,10 @@
+class Main {
+  function void main() {
+    var boolean a, b, c;
+    let a = false;
+    let a = true;
+    let b = ~a;
+    let c = a & b;
+    return;
+  }
+}

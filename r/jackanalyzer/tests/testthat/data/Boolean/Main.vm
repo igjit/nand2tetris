@@ -1,0 +1,15 @@
+function Main.main 3
+push constant 0
+pop local 0
+push constant 0
+not
+pop local 0
+push local 0
+not
+pop local 1
+push local 0
+push local 1
+and
+pop local 2
+push constant 0
+return

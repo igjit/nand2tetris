@@ -62,6 +62,8 @@ compile_term <- function(node, lookup) {
   if (is(node$elements[[1]], "int_const_token")) {
     val <- node$elements[[1]]$int_val
     paste("push constant", val)
+  } else if (is_keyword_constant(node$elements[[1]])) {
+    compile_keyword_constant(node$elements[[1]])
   } else if (is(node$elements[[1]], "identifier_token")) {
     if (length(node$elements) == 1) {
       compile_ver_name_term(node, lookup)
@@ -98,17 +100,27 @@ compile_subroutine_call <- function(node, lookup) {
     paste("call", fname, length(expressions)))
 }
 
+compile_keyword_constant <- function(token) {
+  switch(token$keyword,
+         "true" = c("push constant 0",
+                    "not"),
+         "false" = "push constant 0")
+}
+
 compile_op <- function(token) {
   switch(token$symbol,
          "+" = "add",
          "-" = "sub",
          "*" = "call Math.multiply 2",
-         "/" = "call Math.divide 2")
+         "/" = "call Math.divide 2",
+         "&" = "and",
+         "|" = "or")
 }
 
 compile_unary_op <- function(token) {
   switch(token$symbol,
-         "-" = "neg")
+         "-" = "neg",
+         "~" = "not")
 }
 
 find <- function(node, name) {
