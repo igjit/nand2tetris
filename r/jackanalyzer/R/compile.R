@@ -70,9 +70,9 @@ compile_term <- function(node, lookup) {
     }
   } else if (is_token_of(node$elements[[1]], "(")) {
     compile_expression(node$elements[[2]], lookup)
-  } else if (is_token_of(node$elements[[1]], "-")) {
+  } else if (is_unary_op(node$elements[[1]])) {
     c(compile_term(node$elements[[2]], lookup),
-      "neg")
+      compile_unary_op(node$elements[[1]]))
   } else {
     stop("TODO")
   }
@@ -104,6 +104,11 @@ compile_op <- function(token) {
          "-" = "sub",
          "*" = "call Math.multiply 2",
          "/" = "call Math.divide 2")
+}
+
+compile_unary_op <- function(token) {
+  switch(token$symbol,
+         "-" = "neg")
 }
 
 find <- function(node, name) {
