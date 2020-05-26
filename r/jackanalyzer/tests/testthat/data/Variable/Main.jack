@@ -1,0 +1,9 @@
+class Main {
+  function void main() {
+    var int a, b;
+    let a = 40;
+    let b = 2;
+    do Output.printInt(a + b);
+    return;
+  }
+}

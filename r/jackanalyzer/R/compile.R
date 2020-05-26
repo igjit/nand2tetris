@@ -10,18 +10,27 @@ compile <- function(node) {
 compile_function <- function(node, class_name) {
   fname <- node$elements[[3]]$identifier
   statements <- find(node, "statements")
-  # TODO
-  n_locals <- 0
+  ftable <- function_symbol_table(node)
+  lookup <- new_lookup(ftable)
+  n_locals <- ftable %>% filter(kind == "var") %>% nrow
   c(paste("function", str_c(class_name, ".", fname), n_locals),
-    map(statements$elements, compile_statement) %>% flatten_chr)
+    map(statements$elements, compile_statement, lookup) %>% flatten_chr)
 }
 
-compile_statement <- function(node) {
+compile_statement <- function(node, lookup) {
   fname <- str_c("compile_", pluck(node, "elements", 1, "keyword"), "_statement")
-  do.call(fname, list(node))
+  do.call(fname, list(node, lookup))
 }
 
-compile_do_statement <- function(node) {
+compile_let_statement <- function(node, lookup) {
+  name <- node$elements[[2]]$identifier
+  expression <- node$elements[[length(node$elements) - 1]]
+  index <- lookup(name)$index
+  c(compile_expression(expression, lookup),
+    paste("pop local", index))
+}
+
+compile_do_statement <- function(node, lookup) {
   if (!is_token_of(node$elements[[3]], ".")) stop("TODO")
   fname <- node$elements[2:4] %>%
     map_chr(1) %>%
@@ -30,39 +39,47 @@ compile_do_statement <- function(node) {
     pluck("elements") %>%
     discard(~ is_token_of(., ","))
 
-  c(map(expressions, compile_expression) %>% flatten_chr,
+  c(map(expressions, compile_expression, lookup) %>% flatten_chr,
     paste("call", fname, length(expressions)),
     "pop temp 0")
 }
 
-compile_return_statement <- function(node) {
+compile_return_statement <- function(node, lookup) {
   # TODO
   c("push constant 0",
     "return")
 }
 
-compile_expression <- function(node) {
+compile_expression <- function(node, lookup) {
   if (length(node$elements) == 1) {
-    compile_term(node$elements[[1]])
+    compile_term(node$elements[[1]], lookup)
   } else {
-    c(compile_term(node$elements[[1]]),
-      compile_term(node$elements[[3]]),
+    c(compile_term(node$elements[[1]], lookup),
+      compile_term(node$elements[[3]], lookup),
       compile_op(node$elements[[2]]))
   }
 }
 
-compile_term <- function(node) {
+compile_term <- function(node, lookup) {
   if (is(node$elements[[1]], "int_const_token")) {
     val <- node$elements[[1]]$int_val
     paste("push constant", val)
+  } else if (is(node$elements[[1]], "identifier_token")) {
+    compile_ver_name_term(node, lookup)
   } else if (is_token_of(node$elements[[1]], "(")) {
-    compile_expression(node$elements[[2]])
+    compile_expression(node$elements[[2]], lookup)
   } else if (is_token_of(node$elements[[1]], "-")) {
-    c(compile_term(node$elements[[2]]),
+    c(compile_term(node$elements[[2]], lookup),
       "neg")
   } else {
     stop("TODO")
   }
+}
+
+compile_ver_name_term <- function(node, lookup) {
+  name <- node$elements[[1]]$identifier
+  index <- lookup(name)$index
+  paste("push local", index)
 }
 
 compile_op <- function(token) {
@@ -82,4 +99,8 @@ find <- function(node, name) {
     node$elements %>% detect(~ !is.null(child <<- find(., name)))
     child
   }
+}
+
+new_lookup <- function(table) {
+  function(name) filter(table, name == !!name)
 }
