@@ -1,0 +1,10 @@
+class Main {
+  function void main() {
+    do Output.printInt(Main.add(40, 2));
+    return;
+  }
+
+  function int add(int a, int b) {
+    return a + b;
+  }
+}

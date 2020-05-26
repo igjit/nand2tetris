@@ -39,9 +39,13 @@ compile_do_statement <- function(node, lookup) {
 }
 
 compile_return_statement <- function(node, lookup) {
-  # TODO
-  c("push constant 0",
-    "return")
+  if (is(node$elements[[2]], "expression_node")) {
+    c(compile_expression(node$elements[[2]], lookup),
+      "return")
+  } else {
+    c("push constant 0",
+      "return")
+  }
 }
 
 compile_expression <- function(node, lookup) {
@@ -59,7 +63,11 @@ compile_term <- function(node, lookup) {
     val <- node$elements[[1]]$int_val
     paste("push constant", val)
   } else if (is(node$elements[[1]], "identifier_token")) {
-    compile_ver_name_term(node, lookup)
+    if (length(node$elements) == 1) {
+      compile_ver_name_term(node, lookup)
+    } else {
+      compile_subroutine_call(node, lookup)
+    }
   } else if (is_token_of(node$elements[[1]], "(")) {
     compile_expression(node$elements[[2]], lookup)
   } else if (is_token_of(node$elements[[1]], "-")) {
@@ -73,7 +81,8 @@ compile_term <- function(node, lookup) {
 compile_ver_name_term <- function(node, lookup) {
   name <- node$elements[[1]]$identifier
   index <- lookup(name)$index
-  paste("push local", index)
+  segment <- if (lookup(name)$kind == "argument") "argument" else "local"
+  paste("push", segment, index)
 }
 
 compile_subroutine_call <- function(node, lookup) {
