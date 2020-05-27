@@ -37,8 +37,9 @@ compile_let_statement <- function(node, lookup) {
   name <- node$elements[[2]]$identifier
   expression <- node$elements[[length(node$elements) - 1]]
   index <- lookup(name)$index
+  segment <- segment_of(lookup(name)$kind)
   c(compile_expression(expression, lookup),
-    paste("pop local", index))
+    paste("pop", segment, index))
 }
 
 compile_if_statement <- function(node, lookup, counter) {
