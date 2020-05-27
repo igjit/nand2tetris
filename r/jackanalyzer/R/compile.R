@@ -130,7 +130,7 @@ compile_string_constant <- function(node) {
 compile_ver_name_term <- function(node, lookup) {
   name <- node$elements[[1]]$identifier
   index <- lookup(name)$index
-  segment <- if (lookup(name)$kind == "argument") "argument" else "local"
+  segment <- segment_of(lookup(name)$kind)
   paste("push", segment, index)
 }
 
@@ -197,4 +197,8 @@ new_counter <- function() {
       (index[[name]] <<- index[[name]] + 1)
     }
   }
+}
+
+segment_of <- function(kind) {
+  if (kind == "argument") "argument" else "local"
 }
