@@ -161,15 +161,19 @@ compile_array_access_term <- function(node, lookup) {
 
 compile_subroutine_call <- function(node, lookup) {
   if (!is_token_of(node$elements[[2]], ".")) stop("TODO")
-  fname <- node$elements[1:3] %>%
-    map_chr(1) %>%
-    str_c(collapse = "")
+  name <- node$elements[[1]]$identifier
+  class_name <- lookup(name)$type
+  is_method_call <- length(class_name) > 0
+  receiver <- if (is_method_call) class_name else name
+  fname <- str_c(receiver, ".", node$elements[[3]]$identifier)
   expressions <- find(node, "expressionList") %>%
     pluck("elements") %>%
     discard(~ is_token_of(., ","))
+  n_args <- length(expressions) + if (is_method_call) 1 else 0
 
-  c(map(expressions, compile_expression, lookup) %>% flatten_chr,
-    paste("call", fname, length(expressions)))
+  c(if (is_method_call) compile_term(list(elements = node$elements[1]), lookup),
+    map(expressions, compile_expression, lookup) %>% flatten_chr,
+    paste("call", fname, n_args))
 }
 
 compile_keyword_constant <- function(token) {

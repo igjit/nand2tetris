@@ -1,0 +1,8 @@
+class Main {
+  function void main() {
+    var Complex c;
+    let c = Complex.new(3, 2);
+    do c.mult(10);
+    return;
+  }
+}
