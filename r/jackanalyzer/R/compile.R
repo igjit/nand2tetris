@@ -176,7 +176,8 @@ compile_keyword_constant <- function(token) {
   switch(token$keyword,
          "true" = c("push constant 0",
                     "not"),
-         "false" = "push constant 0")
+         "false" = "push constant 0",
+         "null" = "push constant 0")
 }
 
 compile_op <- function(token) {
