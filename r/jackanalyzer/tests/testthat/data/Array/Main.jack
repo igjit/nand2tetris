@@ -1,0 +1,10 @@
+class Main {
+  function void main() {
+    var Array a;
+    let a = Array.new(2);
+    let a[0] = 20;
+    let a[1] = 22;
+    do Output.printInt(a[0] + a[1]);
+    return;
+  }
+}

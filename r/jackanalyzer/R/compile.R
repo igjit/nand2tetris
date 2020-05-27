@@ -38,8 +38,19 @@ compile_let_statement <- function(node, lookup) {
   expression <- node$elements[[length(node$elements) - 1]]
   index <- lookup(name)$index
   segment <- segment_of(lookup(name)$kind)
-  c(compile_expression(expression, lookup),
-    paste("pop", segment, index))
+  if (is_token_of(node$elements[[3]], "[")) {
+    c(compile_expression(node$elements[[4]], lookup),
+      paste("push", segment, index),
+      "add",
+      compile_expression(expression, lookup),
+      "pop temp 0",
+      "pop pointer 1",
+      "push temp 0",
+      "pop that 0")
+  } else {
+    c(compile_expression(expression, lookup),
+      paste("pop", segment, index))
+  }
 }
 
 compile_if_statement <- function(node, lookup, counter) {
@@ -106,6 +117,8 @@ compile_term <- function(node, lookup) {
   } else if (is(node$elements[[1]], "identifier_token")) {
     if (length(node$elements) == 1) {
       compile_ver_name_term(node, lookup)
+    } else if (is_token_of(node$elements[[2]], "[")) {
+      compile_array_access_term(node, lookup)
     } else {
       compile_subroutine_call(node, lookup)
     }
@@ -133,6 +146,17 @@ compile_ver_name_term <- function(node, lookup) {
   index <- lookup(name)$index
   segment <- segment_of(lookup(name)$kind)
   paste("push", segment, index)
+}
+
+compile_array_access_term <- function(node, lookup) {
+  name <- node$elements[[1]]$identifier
+  index <- lookup(name)$index
+  segment <- segment_of(lookup(name)$kind)
+  c(compile_expression(node$elements[[3]], lookup),
+    paste("push", segment, index),
+    "add",
+    "pop pointer 1",
+    "push that 0")
 }
 
 compile_subroutine_call <- function(node, lookup) {
