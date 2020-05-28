@@ -1,0 +1,8 @@
+function Main.setValue 0
+push constant 12
+pop static 0
+push constant 0
+return
+function Main.getValue 0
+push static 0
+return

@@ -1,0 +1,12 @@
+class Main {
+  static int value;
+
+  function void setValue() {
+    let value = 12;
+    return;
+  }
+
+  function int getValue() {
+    return value;
+  }
+}

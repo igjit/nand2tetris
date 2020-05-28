@@ -16,4 +16,5 @@ test_that("compile works", {
   expect_compiled(file.path("data", "Array", "Main.jack"))
   expect_compiled(file.path("data", "Method", "Main.jack"))
   expect_compiled(file.path("data", "Method", "Complex.jack"))
+  expect_compiled(file.path("data", "Static", "Main.jack"))
 })

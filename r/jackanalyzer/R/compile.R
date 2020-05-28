@@ -52,8 +52,9 @@ compile_function <- function(node, class_node) {
   class_name <- class_node$elements[[2]]$identifier
   fname <- node$elements[[3]]$identifier
   statements <- find(node, "statements")
+  ctable <- class_symbol_table(class_node)
   ftable <- function_symbol_table(node)
-  lookup <- new_lookup(ftable)
+  lookup <- new_lookup(rbind(ctable, ftable))
   counter <- new_counter()
   n_locals <- ftable %>% filter(kind == "var") %>% nrow
   c(paste("function", str_c(class_name, ".", fname), n_locals),
@@ -284,6 +285,6 @@ segment_of <- function(kind) {
   switch(kind,
          "argument" = "argument",
          "var" = "local",
-         "field" = "this",
-         stop("TODO"))
+         "static" = "static",
+         "field" = "this")
 }
