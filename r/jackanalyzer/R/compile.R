@@ -7,6 +7,8 @@ compile <- function(node) {
 }
 
 compile_subroutine_dec <- function(node, class_node) {
+  # FIXME
+  CLASS_NAME <<- class_node$elements[[2]]$identifier
   switch(node$elements[[1]]$keyword,
          "constructor" = compile_constructor(node, class_node),
          "method" = compile_method(node, class_node),
@@ -200,18 +202,26 @@ compile_array_access_term <- function(node, lookup) {
 }
 
 compile_subroutine_call <- function(node, lookup) {
-  if (!is_token_of(node$elements[[2]], ".")) stop("TODO")
-  name <- node$elements[[1]]$identifier
-  class_name <- lookup(name)$type
-  is_method_call <- length(class_name) > 0
-  receiver <- if (is_method_call) class_name else name
-  fname <- str_c(receiver, ".", node$elements[[3]]$identifier)
+  if (is_token_of(node$elements[[2]], ".")) {
+    name <- node$elements[[1]]$identifier
+    class_name <- lookup(name)$type
+    is_method_call <- length(class_name) > 0
+    receiver <- if (is_method_call) class_name else name
+    method_name <- node$elements[[3]]$identifier
+    if (is_method_call) receiver_term <- list(elements = node$elements[1])
+  } else {
+    is_method_call <- TRUE
+    receiver <- CLASS_NAME
+    method_name <- node$elements[[1]]$identifier
+    receiver_term <- list(elements = list(keyword_token("this")))
+  }
+  fname <- str_c(receiver, ".", method_name)
   expressions <- find(node, "expressionList") %>%
     pluck("elements") %>%
     discard(~ is_token_of(., ","))
   n_args <- length(expressions) + if (is_method_call) 1 else 0
 
-  c(if (is_method_call) compile_term(list(elements = node$elements[1]), lookup),
+  c(if (is_method_call) compile_term(receiver_term, lookup),
     map(expressions, compile_expression, lookup) %>% flatten_chr,
     paste("call", fname, n_args))
 }
