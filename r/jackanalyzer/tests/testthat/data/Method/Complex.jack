@@ -1,0 +1,10 @@
+class Complex {
+  field int re;
+  field int im;
+
+  constructor Complex new(int aRe, int aIm) {
+    let re = aRe;
+    let im = aIm;
+    return this;
+  }
+}

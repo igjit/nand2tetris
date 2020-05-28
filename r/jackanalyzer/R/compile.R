@@ -8,7 +8,25 @@ compile <- function(node) {
 
 compile_subroutine_dec <- function(node, class_node) {
   switch(node$elements[[1]]$keyword,
+         "constructor" = compile_constructor(node, class_node),
          "function" = compile_function(node, class_node))
+}
+
+compile_constructor <- function(node, class_node) {
+  class_name <- class_node$elements[[2]]$identifier
+  fname <- node$elements[[3]]$identifier
+  statements <- find(node, "statements")
+  ctable <- class_symbol_table(class_node)
+  ftable <- function_symbol_table(node)
+  lookup <- new_lookup(rbind(ctable, ftable))
+  counter <- new_counter()
+  n_locals <- ftable %>% filter(kind == "var") %>% nrow
+  n_fields <- ctable %>% filter(kind == "field") %>% nrow
+  c(paste("function", str_c(class_name, ".", fname), n_locals),
+    paste("push constant", n_fields),
+    "call Memory.alloc 1",
+    "pop pointer 0",
+    compile_statements(statements, lookup, counter))
 }
 
 compile_function <- function(node, class_node) {
@@ -186,7 +204,8 @@ compile_keyword_constant <- function(token) {
          "true" = c("push constant 0",
                     "not"),
          "false" = "push constant 0",
-         "null" = "push constant 0")
+         "null" = "push constant 0",
+         "this" = "push pointer 0")
 }
 
 compile_op <- function(token) {
@@ -235,5 +254,9 @@ new_counter <- function() {
 }
 
 segment_of <- function(kind) {
-  if (kind == "argument") "argument" else "local"
+  switch(kind,
+         "argument" = "argument",
+         "var" = "local",
+         "field" = "this",
+         stop("TODO"))
 }
