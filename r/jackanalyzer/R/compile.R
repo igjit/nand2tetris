@@ -1,13 +1,18 @@
 compile <- function(node) {
   if (!is(node, "class_node")) stop()
-  class_name <- node$elements[[2]]$identifier
   subroutines <- node$elements %>% keep(~ is(., "subroutine_dec_node"))
   subroutines %>%
-    map(compile_function, class_name) %>%
+    map(compile_subroutine_dec, node) %>%
     flatten_chr
 }
 
-compile_function <- function(node, class_name) {
+compile_subroutine_dec <- function(node, class_node) {
+  switch(node$elements[[1]]$keyword,
+         "function" = compile_function(node, class_node))
+}
+
+compile_function <- function(node, class_node) {
+  class_name <- class_node$elements[[2]]$identifier
   fname <- node$elements[[3]]$identifier
   statements <- find(node, "statements")
   ftable <- function_symbol_table(node)
