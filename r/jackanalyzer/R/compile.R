@@ -9,6 +9,7 @@ compile <- function(node) {
 compile_subroutine_dec <- function(node, class_node) {
   switch(node$elements[[1]]$keyword,
          "constructor" = compile_constructor(node, class_node),
+         "method" = compile_method(node, class_node),
          "function" = compile_function(node, class_node))
 }
 
@@ -25,6 +26,22 @@ compile_constructor <- function(node, class_node) {
   c(paste("function", str_c(class_name, ".", fname), n_locals),
     paste("push constant", n_fields),
     "call Memory.alloc 1",
+    "pop pointer 0",
+    compile_statements(statements, lookup, counter))
+}
+
+compile_method <- function(node, class_node) {
+  class_name <- class_node$elements[[2]]$identifier
+  fname <- node$elements[[3]]$identifier
+  statements <- find(node, "statements")
+  ctable <- class_symbol_table(class_node)
+  mtable <- method_symbol_table(node, class_name)
+  lookup <- new_lookup(rbind(ctable, mtable))
+  counter <- new_counter()
+  n_locals <- mtable %>% filter(kind == "var") %>% nrow
+  n_fields <- ctable %>% filter(kind == "field") %>% nrow
+  c(paste("function", str_c(class_name, ".", fname), n_locals),
+    "push argument 0",
     "pop pointer 0",
     compile_statements(statements, lookup, counter))
 }

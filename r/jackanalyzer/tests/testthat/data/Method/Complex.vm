@@ -8,3 +8,16 @@ push argument 1
 pop this 1
 push pointer 0
 return
+function Complex.mult 0
+push argument 0
+pop pointer 0
+push this 0
+push argument 1
+call Math.multiply 2
+pop this 0
+push this 1
+push argument 1
+call Math.multiply 2
+pop this 1
+push constant 0
+return

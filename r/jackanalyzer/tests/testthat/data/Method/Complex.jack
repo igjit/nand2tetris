@@ -7,4 +7,10 @@ class Complex {
     let im = aIm;
     return this;
   }
+
+  method void mult (int c) {
+    let re = re * c;
+    let im = im * c;
+    return;
+  }
 }
