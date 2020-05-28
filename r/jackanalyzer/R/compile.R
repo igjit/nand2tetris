@@ -41,7 +41,6 @@ compile_method <- function(node, class_node) {
   lookup <- new_lookup(rbind(ctable, mtable))
   counter <- new_counter()
   n_locals <- mtable %>% filter(kind == "var") %>% nrow
-  n_fields <- ctable %>% filter(kind == "field") %>% nrow
   c(paste("function", str_c(class_name, ".", fname), n_locals),
     "push argument 0",
     "pop pointer 0",
