@@ -6,6 +6,10 @@ test_that("class_symbol_table works", {
                      kind = c("static", "static", "field", "field"),
                      index = c(0, 1, 0, 1))
   expect_equal(class_symbol_table(node), expected)
+
+  code <- "class Foo {}"
+  node <- parse(tokenize(code))
+  expect_equal(nrow(class_symbol_table(node)), 0)
 })
 
 test_that("class_symbol_table works", {

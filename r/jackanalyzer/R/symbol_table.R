@@ -1,12 +1,17 @@
 #' @import dplyr
 #' @import purrr
 class_symbol_table <- function(class_node) {
-  class_node$elements %>%
+  var_df <- class_node$elements %>%
     keep(~ is(., "class_var_dec_node")) %>%
-    map_dfr(var_dec_to_df) %>%
-    group_by(kind) %>%
-    mutate(index = row_number() - 1) %>%
-    ungroup()
+    map_dfr(var_dec_to_df)
+  if (nrow(var_df) == 0) {
+    var_df
+  } else {
+    var_df %>%
+      group_by(kind) %>%
+      mutate(index = row_number() - 1) %>%
+      ungroup()
+  }
 }
 
 method_symbol_table <- function(method_node, class_name) {
