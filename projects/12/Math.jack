@@ -8,13 +8,37 @@
  * Note: Jack compilers implement multiplication and division using OS method calls.
  */
 class Math {
+    static Array twoToThe;
 
     /** Initializes the library. */
     function void init() {
+        let twoToThe = Array.new(16);
+        let twoToThe[0] = 1;
+        let twoToThe[1] = 2;
+        let twoToThe[2] = 4;
+        let twoToThe[3] = 8;
+        let twoToThe[4] = 16;
+        let twoToThe[5] = 32;
+        let twoToThe[6] = 64;
+        let twoToThe[7] = 128;
+        let twoToThe[8] = 256;
+        let twoToThe[9] = 512;
+        let twoToThe[10] = 1024;
+        let twoToThe[11] = 2048;
+        let twoToThe[12] = 4096;
+        let twoToThe[13] = 8192;
+        let twoToThe[14] = 16384;
+        let twoToThe[15] = 16384 + 16384;
+        return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+        if (x < 0) {
+            return -x;
+        } else {
+            return x;
+        }
     }
 
     /** Returns the product of x and y. 
@@ -23,6 +47,18 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
+        var int sum, shiftedX, j;
+        let sum = 0;
+        let shiftedX = x;
+        let j = 0;
+        while (j < 16) {
+            if (Math.bit(y, j)) {
+                let sum = sum + shiftedX;
+            }
+            let shiftedX = shiftedX + shiftedX;
+            let j = j + 1;
+        }
+        return sum;
     }
 
     /** Returns the integer part of x/y.
@@ -31,17 +67,66 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
+        var int result;
+        var boolean isPositive;
+        let isPositive = (x > 0) = (y > 0);
+        let result = Math.dividePositive(Math.abs(x), Math.abs(y));
+        if (isPositive) {
+            return result;
+        } else {
+            return -result;
+        }
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+        var int y, j, tempY, tempY2;
+        let y = 0;
+        let j = 7;
+        while (~(j < 0)) {
+            let tempY = y + twoToThe[j];
+            let tempY2 = tempY * tempY;
+            if (~(tempY2 > x) & (tempY2 > 0)) {
+                let y = tempY;
+            }
+            let j = j - 1;
+        }
+        return y;
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
+        if (a > b) {
+            return a;
+        } else {
+            return b;
+        }
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
+        if (a < b) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+
+    function toolean bit(int x, int j) {
+        return ~((x & twoToThe[j]) = 0);
+    }
+
+    function int dividePositive(int x, int y) {
+        var int q;
+        if (y > x) {
+            return 0;
+        }
+        let q = Math.dividePositive(x, y * 2);
+        if ((x - (2 * q * y)) < y) {
+            return 2 * q;
+        } else {
+            return (2 * q) + 1;
+        }
+
     }
 }
