@@ -18,9 +18,16 @@ class Output {
 
     // Character map for displaying characters
     static Array charMaps;
+    static int screenRow, screenCol;
+    static Array screenAddress;
 
     /** Initializes the screen, and locates the cursor at the screen's top-left. */
     function void init() {
+        let screenAddress = 16384;
+        let screenRow = 0;
+        let screenCol = 0;
+        do Output.initMap();
+        return;
     }
 
     // Initializes the character map array
@@ -71,7 +78,7 @@ class Output {
         do Output.create(64,30,51,51,59,59,59,27,3,30,0,0);  // @
         do Output.create(63,30,51,51,24,12,12,0,12,12,0,0);  // ?
 
-        do Output.create(65,0,0,0,0,0,0,0,0,0,0,0);          // A ** TO BE FILLED **
+        do Output.create(65,12,30,51,51,63,51,51,51,51,0,0); // A
         do Output.create(66,31,51,51,51,31,51,51,51,31,0,0); // B
         do Output.create(67,28,54,35,3,3,3,35,54,28,0,0);    // C
         do Output.create(68,15,27,51,51,51,51,51,27,15,0,0); // D
@@ -176,28 +183,103 @@ class Output {
     /** Moves the cursor to the j-th column of the i-th row,
      *  and erases the character displayed there. */
     function void moveCursor(int i, int j) {
+        let screenRow = i;
+        let screenCol = j;
+        do Output.setChar(32);
+        return;
     }
 
     /** Displays the given character at the cursor location,
      *  and advances the cursor one column forward. */
     function void printChar(char c) {
+        do Output.setChar(c);
+        do Output.forward();
+        return;
+    }
+
+    function void setChar(char c) {
+        var int address, mask, i, bitmap;
+        var Array map;
+        let address = (screenRow * 11 * 32) + ((screenCol * 8) / 16);
+        let mask = screenCol & 1;
+        let map = Output.getMap(c);
+        while (i < 11) {
+            let bitmap = map[i];
+            if (mask = 1) {
+                let bitmap = bitmap * 256;
+            }
+            let screenAddress[address] = screenAddress[address] | bitmap;
+            let address = address + 32;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    function void forward() {
+        let screenCol = screenCol + 1;
+        if (screenCol < 64) {
+            do Output.moveCursor(screenRow, screenCol);
+        } else {
+            let screenRow = screenRow + 1;
+            let screenCol = 0;
+            if (screenRow > 22) {
+                let screenRow = 0;
+            }
+            do Output.moveCursor(screenRow, screenCol);
+        }
+        return;
     }
 
     /** displays the given string starting at the cursor location,
      *  and advances the cursor appropriately. */
     function void printString(String s) {
+        var int len, i;
+        let len = s.length();
+        while (len > i) {
+            do Output.printChar(s.charAt(i));
+            let i = i + 1;
+        }
+        return;
     }
 
     /** Displays the given integer starting at the cursor location,
      *  and advances the cursor appropriately. */
-    function void printInt(int i) {
+    function void printInt(int v) {
+        var String s;
+        var int len, i;
+        let s = String.new(6);
+        do s.setInt(v);
+        let len = s.length();
+        while (len > i) {
+            do Output.printChar(s.charAt(i));
+            let i = i + 1;
+        }
+        do s.dispose();
+        return;
     }
 
     /** Advances the cursor to the beginning of the next line. */
     function void println() {
+        let screenCol = 0;
+        let screenRow = screenRow + 1;
+        if (screenRow > 22) {
+            let screenRow = 0;
+        }
+        do Output.moveCursor(screenRow, screenCol);
+        return;
     }
 
     /** Moves the cursor one column back. */
     function void backSpace() {
+        if ((screenCol = 0) & (screenRow = 0)) {
+            return;
+        }
+        let screenCol = screenCol - 1;
+        if (screenCol < 0) {
+            let screenCol = 63;
+            let screenRow = screenRow - 1;
+        }
+        do Output.moveCursor(screenRow, screenCol);
+        return;
     }
 }
