@@ -112,7 +112,7 @@ class Math {
         }
     }
 
-    function toolean bit(int x, int j) {
+    function boolean bit(int x, int j) {
         return ~((x & twoToThe[j]) = 0);
     }
 
