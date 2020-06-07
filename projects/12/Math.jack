@@ -129,4 +129,8 @@ class Math {
         }
 
     }
+
+    function int twoToThe(int i) {
+        return twoToThe[i];
+    }
 }
