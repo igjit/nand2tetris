@@ -55,6 +55,44 @@ class Screen {
     function void drawLine(int x1, int y1, int x2, int y2) {
     }
 
+    function void drawHorizontalLine(int x1, int x2, int y)  {
+        var int startAddress, endAddress;
+        var int x1b, x2b;
+        let x1b = x1 & 15;
+        let x2b = x2 & 15;
+        let startAddress = (32 * y) + (x1 / 16);
+        let endAddress = (32 * y) + (x2 / 16);
+        if (x2b = 0) {
+            let endAddress = endAddress - 1;
+        }
+
+        if (startAddress = endAddress) {
+            do Screen.drawHorizontalLineInSameAddress(x1, x2, y);
+        } else {
+            if (x1b > 0) {
+                do Screen.drawHorizontalLineInSameAddress(x1, x1 + 16 - x1b, y);
+                let startAddress = startAddress + 1;
+            }
+            if (x2b > 0) {
+                do Screen.drawHorizontalLineInSameAddress(x2 - x2b, x2, y);
+                let endAddress = endAddress - 1;
+            }
+            while (~(startAddress > endAddress)) {
+                let screen[startAddress] = color;
+                let startAddress = startAddress + 1;
+            }
+        }
+        return;
+    }
+
+    function void drawHorizontalLineInSameAddress(int x1, int x2, int y)  {
+        while(~(x1 > x2)) {
+            do Screen.drawPixel(x1, y);
+            let x1 = x1 + 1;
+        }
+        return;
+    }
+
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
