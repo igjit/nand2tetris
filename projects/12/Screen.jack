@@ -93,6 +93,20 @@ class Screen {
         return;
     }
 
+    function void drawVerticalLine(int x, int y1, int y2) {
+        var int ly;
+        if (y1 > y2) {
+            let ly = y1;
+            let y1 = y2;
+            let y2 = ly;
+        }
+        while (~(y1 > y2)) {
+            do Screen.drawPixel(x, y1);
+            let y1 = y1 + 1;
+        }
+        return;
+    }
+
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
