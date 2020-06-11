@@ -107,6 +107,24 @@ class Screen {
         return;
     }
 
+    function void drawDiagonalLine(int x1, int y1, int x2, int y2) {
+        var int a, b, dx, dy;
+        var int adyMinusbdx;
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        while (~(a > dx) & ~(b > dy)) {
+            do Screen.drawPixel(x1 + a, y1 + b);
+            if (adyMinusbdx < 0) {
+                let adyMinusbdx = adyMinusbdx + dx;
+                let b = b + 1;
+            } else {
+                let adyMinusbdx = adyMinusbdx - dy;
+                let a = a + 1;
+            }
+        }
+        return;
+    }
+
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
