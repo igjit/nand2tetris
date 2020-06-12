@@ -112,14 +112,28 @@ class Screen {
         var int adyMinusbdx;
         let dx = x2 - x1;
         let dy = y2 - y1;
-        while (~(a > dx) & ~(b > dy)) {
-            do Screen.drawPixel(x1 + a, y1 + b);
-            if (adyMinusbdx < 0) {
-                let adyMinusbdx = adyMinusbdx + dx;
-                let b = b + 1;
-            } else {
-                let adyMinusbdx = adyMinusbdx - dy;
-                let a = a + 1;
+        if (dy > 0) {
+            while (~(a > dx) & ~(b > dy)) {
+                do Screen.drawPixel(x1 + a, y1 + b);
+                if (adyMinusbdx < 0) {
+                    let adyMinusbdx = adyMinusbdx + dx;
+                    let b = b + 1;
+                } else {
+                    let adyMinusbdx = adyMinusbdx - dy;
+                    let a = a + 1;
+                }
+            }
+        } else {
+            let dy = -dy;
+            while (~(a > dx) & ~(b > dy)) {
+                do Screen.drawPixel(x1 + a, y1 - b);
+                if (adyMinusbdx < 0) {
+                    let adyMinusbdx = adyMinusbdx + dy;
+                    let a = a + 1;
+                } else {
+                    let adyMinusbdx = adyMinusbdx - dx;
+                    let b = b + 1;
+                }
             }
         }
         return;
