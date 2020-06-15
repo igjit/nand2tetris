@@ -10,10 +10,20 @@ class Sys {
 
     /** Performs all the initializations required by the OS. */
     function void init() {
+        do Keyboard.init();
+        do Math.init();
+        do Memory.init();
+        do Output.init();
+        do Screen.init();
+        do Main.main();
+        do Sys.halt();
+        return;
     }
 
     /** Halts the program execution. */
     function void halt() {
+        while (true) {}
+        return;
     }
 
     /** Waits approximately duration milliseconds and returns.  */
