@@ -28,6 +28,15 @@ class Sys {
 
     /** Waits approximately duration milliseconds and returns.  */
     function void wait(int duration) {
+        var int i;
+        while (0 < duration) {
+            let i = 0;
+            while (i < 100) {
+                let i = i + 1;
+            }
+            let duration = duration - 1;
+        }
+        return;
     }
 
     /** Displays the given error code in the form "ERR<errorCode>",
