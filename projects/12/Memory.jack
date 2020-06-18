@@ -9,17 +9,23 @@
  * consists of 32,768 words, each holding a 16-bit binary number.
  */
 class Memory {
+    static Array memory;
 
     /** Initializes the class. */
     function void init() {
+        let memory = 0;
+        return;
     }
 
     /** Returns the RAM value at the given address. */
     function int peek(int address) {
+        return memory[address];
     }
 
     /** Sets the RAM value at the given address to the given value. */
     function void poke(int address, int value) {
+        let memory[address] = value;
+        return;
     }
 
     /** Finds an available RAM block of the given size and returns
